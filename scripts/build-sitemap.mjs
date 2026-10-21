@@ -35,6 +35,7 @@ const urls = [
   { loc: '/contact', lastmod: today, changefreq: 'monthly', priority: 0.5 },
   { loc: '/reviews', lastmod: today, changefreq: 'daily', priority: 0.6 },
   { loc: '/sitemap', lastmod: catalogDate, changefreq: 'weekly', priority: 0.2 },
+  { loc: '/credits', lastmod: today, changefreq: 'yearly', priority: 0.1 },
   ...catalog.categories.map((c) => ({ loc: `/category/${c.slug}`, lastmod: catalogDate, changefreq: 'daily', priority: 0.8 })),
   ...OCCASION_SLUGS.filter(occasionHasItems).map((s) => ({ loc: `/occasion/${s}`, lastmod: catalogDate, changefreq: 'weekly', priority: 0.7 })),
   ...catalog.products.map((p) => ({

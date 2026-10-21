@@ -5,6 +5,7 @@ import { AdminCatalogStore } from '../core/admin-catalog.store';
 import { CatalogService } from '../core/catalog.service';
 import { Category } from '../core/models';
 import { BagStore } from '../core/stores';
+import { Drawer } from '../shared/drawer';
 import { I } from '../shared/icons';
 
 const slugify = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -20,7 +21,7 @@ interface Draft {
 /** Categories with their product counts; add, rename, re-picture, delete (only when empty). */
 @Component({
   selector: 'app-categories-page',
-  imports: [RouterLink, LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule, Drawer],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="adm-page">
@@ -32,8 +33,7 @@ interface Draft {
         <button type="button" class="btn btn-primary btn-sm" (click)="startNew()"><lucide-icon [img]="I.Plus" [size]="16" [strokeWidth]="2.2" /> New category</button>
       </header>
 
-      <div class="layout">
-        <div class="adm-table-wrap">
+      <div class="adm-table-wrap">
           <table class="adm-table">
             <thead><tr><th scope="col" style="width:56px"><span class="visually-hidden">Picture</span></th><th scope="col">Category</th><th scope="col">Web address</th><th scope="col" class="num">Products</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
             <tbody>
@@ -52,14 +52,13 @@ interface Draft {
               }
             </tbody>
           </table>
-        </div>
+      </div>
 
+      <app-drawer [open]="!!draft()" [heading]="draft()?.id ? 'Edit category' : 'New category'" (closed)="draft.set(null)">
         @if (draft(); as d) {
-          <form class="adm-panel editor" (submit)="save($event)" novalidate>
-            <header><h2>{{ d.id ? 'Edit category' : 'New category' }}</h2>
-              <button type="button" class="adm-icon-btn" (click)="draft.set(null)" aria-label="Close"><lucide-icon [img]="I.X" [size]="16" [strokeWidth]="2" /></button></header>
+          <form class="editor" (submit)="save($event)" novalidate>
             <div class="field"><label for="c-name">Name</label>
-              <input id="c-name" class="input" required maxlength="40" [value]="d.name" (input)="setName($any($event.target).value)" /></div>
+              <input id="c-name" class="input" required maxlength="40" autofocus [value]="d.name" (input)="setName($any($event.target).value)" /></div>
             <div class="field"><label for="c-slug">Web address</label>
               <input id="c-slug" class="input mono" required pattern="[a-z0-9-]+" [value]="d.slug" [disabled]="!!d.id" (input)="patch({ slug: slugify($any($event.target).value) })" />
               <span class="field-hint">{{ d.id ? 'Fixed once created, so links keep working.' : '/category/' + (d.slug || '…') }}</span></div>
@@ -68,26 +67,23 @@ interface Draft {
             <div class="field"><label for="c-img">Picture address <span class="t-note">(optional — else the first product's)</span></label>
               <input id="c-img" class="input mono" [value]="d.image" (input)="patch({ image: $any($event.target).value })" /></div>
             @if (error()) { <p class="notice is-negative" role="alert"><lucide-icon [img]="I.CircleAlert" [size]="18" [strokeWidth]="2" /> {{ error() }}</p> }
-            <div class="row">
-              <button class="btn btn-primary btn-sm"><lucide-icon [img]="I.Save" [size]="16" [strokeWidth]="2" /> {{ d.id ? 'Save' : 'Create' }}</button>
-              <button type="button" class="btn btn-plain btn-sm" (click)="draft.set(null)">Cancel</button>
+            <div class="row drawer-actions">
+              <button class="btn btn-primary"><lucide-icon [img]="I.Save" [size]="16" [strokeWidth]="2" /> {{ d.id ? 'Save' : 'Create' }}</button>
+              <button type="button" class="btn btn-plain" (click)="draft.set(null)">Cancel</button>
             </div>
           </form>
         }
-      </div>
+      </app-drawer>
     </div>
   `,
   styles: `
-    .layout { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: start; }
-    .editor { width: 340px; position: sticky; top: 72px; }
-    .editor .input { background: var(--ground); }
+    .editor { display: grid; gap: 18px; }
     .sub { display: block; font-size: 0.75rem; color: var(--ink-3); max-width: 320px; }
     .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.8125rem; color: var(--ink-2); }
     .count { font-weight: 650; color: var(--accent); }
     .row-actions { white-space: nowrap; text-align: right; }
     .row { display: flex; gap: 8px; }
     tr.is-editing { background: color-mix(in srgb, var(--accent) 6%, transparent); }
-    @media (max-width: 1000px) { .layout { grid-template-columns: minmax(0, 1fr); } .editor { width: auto; position: static; } }
   `,
 })
 export class CategoriesPage {

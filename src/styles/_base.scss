@@ -55,6 +55,14 @@ blockquote {
   overflow-wrap: break-word;
 }
 
+// A lone ★ beside a number ("4.7 ★"), drawn in the same face as the @mhfrough/star-rating stars
+.t-star {
+  font-family: var(--font-stars);
+  font-size: calc(1em * var(--star-scale));
+  line-height: 1;
+  color: #f5a623;
+}
+
 .clamp-1 {
   overflow: hidden;
   white-space: nowrap;
@@ -120,13 +128,20 @@ ol[role='list'] {
   padding: 0;
 }
 
-// ---- scrollbars: brand colours, same size and shape as the system's ------
-html {
-  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
-}
+// ---- scrollbars: brand colours, a pill with no arrow buttons --------------
+// Chromium drops every ::-webkit-scrollbar rule on an element as soon as
+// scrollbar-color or scrollbar-width applies to it (and draws the OS bar with
+// arrows), so the standard properties are for Firefox only. Don't set
+// scrollbar-width: thin on components; use `none` to hide a bar, nothing else.
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+  }
 
-* {
-  scrollbar-color: var(--scroll-thumb) transparent;
+  * {
+    scrollbar-color: var(--scroll-thumb) transparent;
+    scrollbar-width: thin;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -139,17 +154,33 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb);
+  background: var(--scroll-thumb) padding-box;
   border-radius: 999px;
-  border: 3px solid var(--scroll-track);
+  border: 3px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover);
+  background: var(--scroll-thumb-hover) padding-box;
 }
 
 ::-webkit-scrollbar-corner {
-  background: var(--scroll-track);
+  background: transparent;
+}
+
+// Inside a card or panel (anything but the page): thinner, no track, and the
+// track stops short of the ends so the thumb never runs into rounded corners.
+:not(html)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:not(html)::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 20px;
+}
+
+:not(html)::-webkit-scrollbar-thumb {
+  border-width: 2px;
 }
 
 ::selection {
@@ -231,6 +262,44 @@ html {
 
 .section {
   padding-block: calc(var(--section-gap) / 2);
+}
+
+// ---- section backdrops ----------------------------------------------------
+// Put on a section component's host; the backdrop runs full width behind it.
+
+// A stock photo (credited on /credits), washed into the page colour and faded
+// out at top and bottom so the band has no hard edges. Set --bg-photo: url(…).
+.bg-photo {
+  position: relative;
+  display: block;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(var(--ground), transparent 22%, transparent 78%, var(--ground)),
+      linear-gradient(color-mix(in srgb, var(--ground) 80%, transparent) 0 0),
+      var(--bg-photo) center / cover no-repeat;
+  }
+}
+
+// A field of fine accent dots that fades out towards the edges.
+.bg-dots {
+  position: relative;
+  display: block;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(color-mix(in srgb, var(--accent) 22%, transparent) 1.2px, transparent 1.7px) 0 0 / 22px 22px;
+    mask-image: radial-gradient(ellipse 70% 80% at 65% 50%, #000 25%, transparent 75%);
+  }
 }
 
 .section-head {

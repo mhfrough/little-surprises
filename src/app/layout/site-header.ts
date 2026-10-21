@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, HostListener, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { CatalogService, cityLabel } from '../core/catalog.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { BagStore } from '../core/stores';
+import { VouchersService } from '../core/vouchers.service';
 import { BrandMark } from '../shared/brand-mark';
 import { ThemeToggle } from '../shared/theme-toggle';
 import { SiteSearch } from './site-search';
@@ -13,7 +14,7 @@ import { I } from '../shared/icons';
   selector: 'app-site-header',
   imports: [RouterLink, RouterLinkActive, LucideAngularModule, BrandMark, SiteSearch, ThemeToggle],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.is-scrolled]': 'scrolled()' },
+  host: { '[class.is-scrolled]': 'scrolled()', '[class.is-compact]': 'compact()' },
   template: `
     <div class="announce">
       <div class="container announce-inner">
@@ -28,14 +29,24 @@ import { I } from '../shared/icons';
           </select>
           <lucide-icon [img]="I.ChevronDown" [size]="14" [strokeWidth]="2.2" />
         </label>
-        <p class="msg">
-          <lucide-icon [img]="I.Truck" [size]="15" [strokeWidth]="2" />
-          @if (catalog.city() === 'karachi') {
-            <span>Same-day delivery across Karachi before 2 pm · Cash on delivery</span>
-          } @else {
-            <span>Delivery to {{ label(catalog.city()) }} in 2–4 days · Cash on delivery</span>
-          }
-        </p>
+        @if (vouchers.featured(); as v) {
+          <!-- the offer the operator featured in the portal; one click puts it on the bag -->
+          <p class="msg">
+            <button type="button" class="promo-msg" (click)="usePromo(v.code)">
+              <lucide-icon [img]="I.TicketPercent" [size]="15" [strokeWidth]="2" />
+              <span>{{ v.description }} · use code <strong>{{ v.code }}</strong></span>
+            </button>
+          </p>
+        } @else {
+          <p class="msg">
+            <lucide-icon [img]="I.Truck" [size]="15" [strokeWidth]="2" />
+            @if (catalog.city() === 'karachi') {
+              <span>Same-day delivery across Karachi before 2 pm · Cash on delivery</span>
+            } @else {
+              <span>Delivery to {{ label(catalog.city()) }} in 2–4 days · Cash on delivery</span>
+            }
+          </p>
+        }
         <div class="util">
           <a routerLink="/reviews" class="util-link">Reviews</a>
           <a routerLink="/contact" class="util-link">Help</a>
@@ -44,21 +55,21 @@ import { I } from '../shared/icons';
       </div>
     </div>
     <header class="bar">
-      <div class="container inner">
+      <div #inner class="container inner">
         <button type="button" class="btn-ghost-icon menu-btn" aria-label="Open menu" [attr.aria-expanded]="open()"
           (click)="open.set(true)">
           <lucide-icon [img]="I.Menu" [size]="22" [strokeWidth]="1.8" />
         </button>
 
-        <a routerLink="/" class="brand"><app-brand-mark /></a>
+        <a #brand routerLink="/" class="brand"><app-brand-mark /></a>
 
-        <nav class="links" aria-label="Main">
+        <nav #nav class="links" aria-label="Main" [attr.aria-hidden]="compact() || null">
           @for (l of links; track l.link) {
             <a [routerLink]="l.link" routerLinkActive="is-active">{{ l.label }}</a>
           }
         </nav>
 
-        <div class="tools">
+        <div #tools class="tools">
           <app-site-search />
           <a routerLink="/contact" class="btn-ghost-icon hide-sm hide-mid" aria-label="Contact us">
             <lucide-icon [img]="I.Phone" [size]="20" [strokeWidth]="1.8" />
@@ -104,6 +115,9 @@ import { I } from '../shared/icons';
     .announce-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; height: 44px; }
     .msg { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; line-height: 1; }
     .msg lucide-icon { color: var(--blush); flex: none; }
+    .promo-msg { display: inline-flex; align-items: center; gap: 8px; color: inherit; font: inherit; line-height: 1; cursor: pointer; }
+    .promo-msg strong { font-weight: 700; letter-spacing: 0.04em; }
+    .promo-msg:hover span { text-decoration: underline; text-underline-offset: 3px; }
     .util { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
     .util-link { padding: 6px 10px; border-radius: var(--radius-pill); color: rgb(247 232 236 / 0.85); line-height: 1; }
     .util-link:hover { color: #fff; background: rgb(255 255 255 / 0.08); }
@@ -117,7 +131,9 @@ import { I } from '../shared/icons';
       appearance: none; background: none; border: 0; color: inherit; font-weight: 650; cursor: pointer; padding: 0 2px;
     }
     .city select:focus { outline: none; }
-    .city option { color: #1f1418; }
+    /* the open list is styled site-wide (_controls.scss); without that support the OS list is light, so keep its text dark */
+    @supports (appearance: base-select) { .city select { appearance: base-select; min-block-size: 0; } }
+    @supports not (appearance: base-select) { .city option { color: #1f1418; } }
     @media (max-width: 760px) {
       .msg, .util-link { display: none; }
       .announce-inner { grid-template-columns: minmax(0, 1fr) auto; }
@@ -132,7 +148,8 @@ import { I } from '../shared/icons';
     :host(.is-scrolled) .bar { background: var(--surface); }
     .inner { display: flex; align-items: center; gap: 24px; height: var(--header-h); }
     .brand { flex: none; border-radius: 8px; }
-    .links { display: flex; gap: 4px; margin-inline: auto; min-width: 0; }
+    /* clipped, so before the fit check runs the links can be cut short but never slide under the search */
+    .links { display: flex; gap: 4px; margin: -6px auto; padding: 6px; min-width: 0; overflow: hidden; } /* padding keeps focus rings inside the clip */
     .links a { white-space: nowrap; flex: none; }
     .links a {
       padding: 8px 14px; border-radius: var(--radius-pill); font-size: 0.9375rem; font-weight: 520; color: var(--ink);
@@ -170,13 +187,18 @@ import { I } from '../shared/icons';
     .sheet .btn { margin-top: auto; }
     @keyframes fade { from { opacity: 0; } }
     @keyframes slide { from { transform: translateX(-100%); } }
-    /* the full menu needs ~1325px next to the search field (more while the fallback
-       font shows); below that, the menu button */
-    @media (max-width: 1360px) {
+    /* Menu button instead of links: always on tablets and phones; in between, when
+       the links measurably don't fit (fonts, zoom and the search width all move that
+       point, so it isn't a fixed breakpoint). Compact links stay laid out, invisible,
+       so their natural width can still be measured to switch back. */
+    :host(.is-compact) .links { position: absolute; visibility: hidden; pointer-events: none; }
+    @media (max-width: 1024px) {
       .links { display: none; }
       .menu-btn { display: inline-grid; }
       .tools { margin-left: auto; }
     }
+    :host(.is-compact) .menu-btn { display: inline-grid; }
+    :host(.is-compact) .tools { margin-left: auto; }
     @media (max-width: 560px) {
       .cta, .hide-sm { display: none; }
       .inner { gap: 8px; }
@@ -188,6 +210,7 @@ export class SiteHeader {
   protected readonly I = I;
   protected readonly bag = inject(BagStore);
   protected readonly catalog = inject(CatalogService);
+  protected readonly vouchers = inject(VouchersService);
   protected readonly label = cityLabel;
   /** Karachi first; falls back to it alone while the catalog loads. */
   protected readonly cityOptions = computed(() => {
@@ -196,6 +219,32 @@ export class SiteHeader {
   });
   protected readonly open = signal(false);
   protected readonly scrolled = signal(false);
+  protected readonly compact = signal(false);
+  private readonly inner = viewChild.required<ElementRef<HTMLElement>>('inner');
+  private readonly brand = viewChild.required<ElementRef<HTMLElement>>('brand');
+  private readonly nav = viewChild.required<ElementRef<HTMLElement>>('nav');
+  private readonly tools = viewChild.required<ElementRef<HTMLElement>>('tools');
+  private readonly destroy = inject(DestroyRef);
+
+  constructor() {
+    afterNextRender(() => {
+      const ro = new ResizeObserver(() => this.fit());
+      for (const r of [this.inner(), this.tools(), this.nav()]) ro.observe(r.nativeElement);
+      document.fonts?.ready.then(() => this.fit());
+      this.destroy.onDestroy(() => ro.disconnect());
+    });
+  }
+
+  /** Links show only when their natural width fits between the wordmark and the tools. */
+  private fit(): void {
+    const inner = this.inner().nativeElement;
+    const gap = parseFloat(getComputedStyle(inner).columnGap) || 0;
+    const pad = parseFloat(getComputedStyle(inner).paddingLeft) + parseFloat(getComputedStyle(inner).paddingRight);
+    const room = inner.clientWidth - pad - this.brand().nativeElement.offsetWidth - this.tools().nativeElement.offsetWidth - gap * 2;
+    const need = this.nav().nativeElement.scrollWidth;
+    // 16px of slack so it doesn't flicker right at the edge
+    this.compact.set(need === 0 ? false : need > room - (this.compact() ? 16 : 0));
+  }
   protected readonly links = [
     { label: 'All gifts', link: '/shop' },
     { label: 'Hampers', link: '/category/hampers' },
@@ -208,6 +257,11 @@ export class SiteHeader {
   @HostListener('window:scroll')
   onScroll(): void {
     this.scrolled.set(window.scrollY > 40);
+  }
+
+  usePromo(code: string): void {
+    const reason = this.bag.applyPromo(code);
+    this.bag.notify(reason ?? `${code} is on your bag: it comes off at checkout`);
   }
 
   @HostListener('document:keydown.escape')

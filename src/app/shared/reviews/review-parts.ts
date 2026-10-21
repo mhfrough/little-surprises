@@ -25,7 +25,7 @@ const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: 'n
         <li>
           <button type="button" class="bar" [attr.aria-pressed]="filter() === n" (click)="filter.set(filter() === n ? 0 : n)"
             [attr.aria-label]="n + ' stars: ' + summary().counts[n - 1] + ' reviews'" [disabled]="!summary().counts[n - 1]">
-            <span class="lbl t-num">{{ n }}★</span>
+            <span class="lbl t-num">{{ n }}<span class="t-star">★</span></span>
             <span class="track"><span [style.width.%]="pct(n)"></span></span>
             <span class="n t-num">{{ summary().counts[n - 1] }}</span>
           </button>

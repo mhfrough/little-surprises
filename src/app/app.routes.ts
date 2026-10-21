@@ -15,6 +15,7 @@ export const routes: Routes = [
   { path: 'policies/:slug', loadComponent: () => import('./pages/policy/policy-page').then((m) => m.PolicyPage) },
   { path: 'reviews', loadComponent: () => import('./pages/reviews/reviews-page').then((m) => m.ReviewsPage) },
   { path: 'sitemap', loadComponent: () => import('./pages/sitemap/sitemap-page').then((m) => m.SitemapPage) },
+  { path: 'credits', loadComponent: () => import('./pages/credits/credits-page').then((m) => m.CreditsPage) },
   { path: 'admin', loadChildren: () => import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES) },
   { path: 'design', loadComponent: () => import('./pages/design/design-page').then((m) => m.DesignPage) },
   { path: '**', loadComponent: () => import('./pages/not-found/not-found-page').then((m) => m.NotFoundPage) },

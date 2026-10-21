@@ -46,7 +46,8 @@ import { RevealDirective } from '../shared/reveal.directive';
     .inner { display: grid; gap: 48px; }
     .split { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 88px); align-items: start; }
     .ready { display: grid; gap: 12px; }
-    .ready img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: 12px; }
+    .ready img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: 12px; transition: transform var(--dur-slow) var(--ease-out); }
+    .ready:hover img { transform: scale(1.07) rotate(-1.5deg); }
     .ready p, .own > p { max-width: 30em; opacity: 0.85; }
     .ready .btn-plain { justify-self: start; color: var(--field-ink); font-weight: 650; }
     .own { display: grid; gap: 16px; justify-items: start; padding-top: clamp(0px, 6vw, 96px); }

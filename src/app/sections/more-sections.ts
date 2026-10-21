@@ -78,7 +78,8 @@ export class ReadyBasketsSection {
     ul { display: grid; gap: 10px; }
     li { display: flex; gap: 10px; align-items: center; }
     li lucide-icon { color: var(--blush); }
-    img { width: 100%; height: 100%; min-height: 360px; object-fit: cover; }
+    img { width: 100%; height: 100%; min-height: 360px; object-fit: cover; transition: transform 1.2s var(--ease-out); }
+    .panel:hover img { transform: scale(1.08) rotate(1.5deg); }
     @media (max-width: 860px) { .panel { grid-template-columns: 1fr; } img { order: -1; aspect-ratio: 16 / 10; min-height: 0; } }
   `,
 })
@@ -91,6 +92,7 @@ export class CorporateSection {
   selector: 'app-reviews-section',
   imports: [RouterLink, ReviewCard, Rating, RevealDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'bg-photo', '[style.--bg-photo]': 'bg' },
   template: `
     <section class="section container" appReveal aria-labelledby="rev-title">
       <div class="section-head">
@@ -120,6 +122,7 @@ export class CorporateSection {
   `,
 })
 export class ReviewsSection {
+  protected readonly bg = `url("${img(PIC.pinkYarn, 1800)}")`;
   private readonly reviews = inject(ReviewsService);
   protected readonly summary = computed(() => this.reviews.summary(this.reviews.all()));
   /** recent, five-star, with something to say */
@@ -133,6 +136,7 @@ export class ReviewsSection {
   selector: 'app-social-section',
   imports: [LucideAngularModule, TiktokIcon, RevealDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'bg-dots' },
   template: `
     <section class="section container social" appReveal aria-labelledby="social-title">
       <div class="copy">
@@ -159,7 +163,9 @@ export class ReviewsSection {
     .copy { display: grid; gap: 16px; }
     .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
     .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-    .grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; background: var(--surface-2); }
+    .grid li { border-radius: 14px; overflow: hidden; }
+    .grid img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--surface-2); transition: transform var(--dur-slow) var(--ease-out); }
+    .grid li:hover img { transform: scale(1.1) rotate(-2.5deg); }
     @media (max-width: 860px) { .social { grid-template-columns: 1fr; } }
   `,
 })
@@ -179,6 +185,7 @@ export class SocialSection {
   selector: 'app-newsletter-section',
   imports: [RevealDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[style.--news-photo]': 'bg' },
   template: `
     <section class="section container" appReveal aria-labelledby="news-title">
       <div class="panel">
@@ -201,7 +208,15 @@ export class SocialSection {
   styles: `
     .panel {
       display: grid; grid-template-columns: 1fr minmax(280px, 460px); gap: 32px; align-items: center;
-      padding: clamp(32px, 5vw, 64px); border-radius: var(--radius-lg); background: var(--surface);
+      padding: clamp(32px, 5vw, 64px); border-radius: var(--radius-lg);
+      /* the kraft flat lay shows through on the right; the text side stays solid surface */
+      background:
+        linear-gradient(90deg, var(--surface) 30%, color-mix(in srgb, var(--surface) 78%, transparent) 62%, color-mix(in srgb, var(--surface) 35%, transparent)),
+        var(--news-photo) center / cover,
+        var(--surface);
+    }
+    @media (max-width: 760px) {
+      .panel { background: linear-gradient(color-mix(in srgb, var(--surface) 88%, transparent) 0 0), var(--news-photo) center / cover, var(--surface); }
     }
     .panel > div { display: grid; gap: 12px; }
     .form { display: flex; gap: 10px; }
@@ -210,5 +225,6 @@ export class SocialSection {
   `,
 })
 export class NewsletterSection {
+  protected readonly bg = `url("${img(PIC.kraftFlatlay, 1800)}")`;
   protected readonly done = signal(false);
 }

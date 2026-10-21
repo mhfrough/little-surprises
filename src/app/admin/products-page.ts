@@ -77,7 +77,7 @@ const PAGE = 20;
                     <input type="checkbox" role="switch" [checked]="p.inStock" (change)="toggleStock(p)" />
                   </label>
                 </td>
-                <td class="num">{{ p.reviewCount ? (p.rating?.toFixed(1) + ' ★ (' + p.reviewCount + ')') : '—' }}</td>
+                <td class="num">@if (p.reviewCount) { {{ p.rating?.toFixed(1) }} <span class="t-star">★</span> ({{ p.reviewCount }}) } @else { — }</td>
                 <td class="row-actions">
                   <a class="adm-icon-btn" [routerLink]="['/product', p.slug]" target="_blank" [attr.aria-label]="'View ' + p.name + ' in the shop'"><lucide-icon [img]="I.Eye" [size]="16" [strokeWidth]="2" /></a>
                   <a class="adm-icon-btn" [routerLink]="['/admin/products', p.id]" [attr.aria-label]="'Edit ' + p.name"><lucide-icon [img]="I.Pencil" [size]="16" [strokeWidth]="2" /></a>

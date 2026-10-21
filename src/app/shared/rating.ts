@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { LucideAngularModule } from 'lucide-angular';
-import { I } from './icons';
+import starRating from '@mhfrough/star-rating';
 
-/** Stars that fill to the exact average (4.3 fills 4 and a third), then the number and count. */
+const KIND: Record<string, 'full' | 'half' | 'empty'> = { '★': 'full', '⯪': 'half', '☆': 'empty' };
+
+/** The package's five glyphs for a score, each tagged so it can be coloured. It throws outside 0–5, so clamp first. */
+export function starGlyphs(score: number) {
+  return [...starRating(Math.min(5, Math.max(0, score || 0)))].map((glyph) => ({ glyph, kind: KIND[glyph] }));
+}
+
+/** Five stars from @mhfrough/star-rating (whole stars plus a half at .5 and up), then the number and count. */
 @Component({
   selector: 'app-rating',
-  imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'img', '[attr.aria-label]': 'label()' },
   template: `
-    <span class="stars" aria-hidden="true">
-      <span class="row empty">
-        @for (n of five; track n) { <lucide-icon [img]="I.Star" [size]="size()" [strokeWidth]="0" /> }
-      </span>
-      <span class="row full" [style.width.%]="(value() / 5) * 100">
-        @for (n of five; track n) { <lucide-icon [img]="I.Star" [size]="size()" [strokeWidth]="0" /> }
-      </span>
+    <span class="stars" aria-hidden="true" [style.--star-size.px]="size()">
+      @for (s of stars(); track $index) { <span [class]="s.kind">{{ s.glyph }}</span> }
     </span>
     @if (showValue()) {
       <span class="value t-num">{{ value().toFixed(1) }}</span>
@@ -26,23 +26,26 @@ import { I } from './icons';
   `,
   styles: `
     :host { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-small); }
-    .stars { position: relative; display: inline-block; line-height: 0; }
-    .row { display: inline-flex; gap: 1px; white-space: nowrap; }
-    .full { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
-    .empty { color: var(--surface-3); }
-    .full { color: #f5a623; }
-    :host ::ng-deep svg { fill: currentColor; flex: none; }
+    /* One symbol font for all three glyphs, each in a fixed 1em box, so a fallback glyph can't shift the row. */
+    .stars {
+      display: inline-flex; line-height: 1; white-space: nowrap;
+      font-family: var(--font-stars); font-size: calc(var(--star-size) * var(--star-scale));
+    }
+    /* box hugs the glyph's 0.83em advance; nudged down because the ink sits above the baseline with no descender */
+    .stars > span { display: inline-block; width: 0.86em; text-align: center; transform: translateY(0.05em); }
+    .full, .half { color: #f5a623; }
+    .empty { color: var(--ink-3); }
     .value { font-weight: 620; }
     .count { color: var(--ink-3); }
   `,
 })
 export class Rating {
-  protected readonly I = I;
-  protected readonly five = [1, 2, 3, 4, 5];
   readonly value = input.required<number>();
   readonly count = input<number | null>(null);
   readonly size = input(14);
   readonly showValue = input(true);
+
+  protected readonly stars = computed(() => starGlyphs(this.value()));
 
   protected readonly label = computed(
     () => `Rated ${this.value().toFixed(1)} out of 5` + (this.count() !== null ? `, ${this.count()} reviews` : ''),

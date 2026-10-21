@@ -92,7 +92,7 @@ const PAGE = 12;
         <div class="chip-row filters" role="group" aria-label="Filter">
           <button type="button" class="chip" [attr.aria-pressed]="!starsNum()" (click)="setQuery({ stars: null })">All stars</button>
           @for (n of [5, 4, 3, 2, 1]; track n) {
-            <button type="button" class="chip" [attr.aria-pressed]="starsNum() === n" (click)="setQuery({ stars: starsNum() === n ? null : n })">{{ n }}★</button>
+            <button type="button" class="chip" [attr.aria-pressed]="starsNum() === n" (click)="setQuery({ stars: starsNum() === n ? null : n })">{{ n }}<span class="t-star">★</span></button>
           }
           <button type="button" class="chip" [attr.aria-pressed]="verified() === '1'" (click)="setQuery({ verified: verified() === '1' ? null : '1' })">
             <lucide-icon [img]="I.CircleCheck" [size]="14" [strokeWidth]="2.2" /> Verified only

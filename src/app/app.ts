@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { PlatformLocation } from '@angular/common';
+import { Component, PLATFORM_ID, inject } from '@angular/core';
+import { PlatformLocation, isPlatformBrowser } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { ImageFallback } from './core/image-fallback';
+import { BagStore } from './core/stores';
 import { ThemeService } from './core/theme.service';
 import { CookieConsent } from './layout/cookie-consent';
 import { SiteFooter } from './layout/site-footer';
@@ -48,5 +49,27 @@ export class App {
   constructor() {
     inject(ImageFallback).start();
     inject(ThemeService); // applies the saved light/dark choice
+    this.takePromoFromLinks();
+  }
+
+  /**
+   * Marketing links carry a code: /?promo=GIFT500 or /shop?promo=GIFT500. Save it on
+   * the bag, say so, and drop it from the address so a refresh or a shared URL
+   * doesn't keep re-applying it.
+   */
+  private takePromoFromLinks(): void {
+    // browser only: on the server, rewriting the URL would become a redirect that drops the code
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+    const bag = inject(BagStore);
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
+      const tree = this.router.parseUrl(this.router.url);
+      const code = tree.queryParams['promo'];
+      if (typeof code !== 'string' || !code) return;
+      const reason = bag.applyPromo(code);
+      bag.notify(reason ?? `Promo ${bag.promoCode()} saved: it comes off at checkout`);
+      const { promo: _, ...rest } = tree.queryParams;
+      tree.queryParams = rest;
+      void this.router.navigateByUrl(tree, { replaceUrl: true });
+    });
   }
 }

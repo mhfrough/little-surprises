@@ -143,8 +143,8 @@ const INTERVAL = 6500;
       transition: opacity 900ms var(--ease-out), visibility 0s linear 900ms;
     }
     .slide.is-active { opacity: 1; visibility: visible; transition: opacity 900ms var(--ease-out), visibility 0s; z-index: 1; }
-    .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); }
-    .slide.is-active img { transform: scale(1); transition: transform 8s var(--ease-out); }
+    .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.12) rotate(2deg); }
+    .slide.is-active img { transform: scale(1) rotate(0deg); transition: transform 8s var(--ease-out); }
     .scrim {
       position: absolute; inset: 0;
       background: linear-gradient(90deg, rgb(20 6 12 / 0.86) 0%, rgb(20 6 12 / 0.62) 45%, rgb(20 6 12 / 0.08) 80%),

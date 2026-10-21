@@ -64,10 +64,16 @@ import {
   Reply,
   CircleX,
   LockKeyhole,
+  TicketPercent,
+  Copy,
+  Link,
 } from 'lucide-angular';
 
 /** The whole icon vocabulary. One stroke weight, sized to the text beside it. */
 export const I = {
+  TicketPercent,
+  Copy,
+  Link,
   CircleX,
   LockKeyhole,
   Reply,

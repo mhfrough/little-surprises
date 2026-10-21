@@ -4,6 +4,9 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { LucideAngularModule } from 'lucide-angular';
 import { AdminCatalogStore } from '../core/admin-catalog.store';
 import { InboxService } from '../core/inbox.service';
+import { VouchersService } from '../core/vouchers.service';
+import { OrdersService } from '../core/orders.service';
+import { CustomersService } from '../core/customers.service';
 import { ReviewsService } from '../core/reviews.service';
 import { BrandMark } from '../shared/brand-mark';
 import { I } from '../shared/icons';
@@ -35,6 +38,9 @@ import { AdminAuth } from './admin-auth';
           <a routerLink="/admin/categories" routerLinkActive="is-active" (click)="navOpen.set(false)">
             <lucide-icon [img]="I.FolderTree" [size]="18" [strokeWidth]="1.8" /> Categories
           </a>
+          <a routerLink="/admin/customers" routerLinkActive="is-active" (click)="navOpen.set(false)">
+            <lucide-icon [img]="I.Users" [size]="18" [strokeWidth]="1.8" /> Customers
+          </a>
           <a routerLink="/admin/inbox" routerLinkActive="is-active" (click)="navOpen.set(false)">
             <lucide-icon [img]="I.Inbox" [size]="18" [strokeWidth]="1.8" /> Inbox
             @if (inbox.unread()) { <span class="count" [attr.aria-label]="inbox.unread() + ' new'">{{ inbox.unread() }}</span> }
@@ -42,6 +48,9 @@ import { AdminAuth } from './admin-auth';
           <a routerLink="/admin/reviews" routerLinkActive="is-active" (click)="navOpen.set(false)">
             <lucide-icon [img]="I.Star" [size]="18" [strokeWidth]="1.8" /> Reviews
             @if (reviews.pendingCount()) { <span class="count" [attr.aria-label]="reviews.pendingCount() + ' to approve'">{{ reviews.pendingCount() }}</span> }
+          </a>
+          <a routerLink="/admin/vouchers" routerLinkActive="is-active" (click)="navOpen.set(false)">
+            <lucide-icon [img]="I.TicketPercent" [size]="18" [strokeWidth]="1.8" /> Vouchers
           </a>
         </nav>
         <div class="side-foot">
@@ -111,6 +120,9 @@ import { AdminAuth } from './admin-auth';
 export class AdminShell {
   protected readonly I = I;
   protected readonly inbox = inject(InboxService);
+  private readonly vouchers = inject(VouchersService);
+  private readonly orders = inject(OrdersService);
+  private readonly customers = inject(CustomersService);
   protected readonly reviews = inject(ReviewsService);
   protected readonly catalog = inject(AdminCatalogStore);
   protected readonly auth = inject(AdminAuth);
@@ -128,9 +140,12 @@ export class AdminShell {
   }
 
   resetDemo(): void {
-    if (!confirm('Throw away every change made in this portal on this browser (products, categories, inbox and review decisions)?')) return;
+    if (!confirm('Throw away every change made in this portal on this browser (products, categories, inbox, review decisions, vouchers, orders and customer merges)?')) return;
     this.catalog.reset();
     this.inbox.reset();
+    this.vouchers.reset();
+    this.orders.reset();
+    this.customers.reset();
     try {
       localStorage.removeItem('ls-review-mod');
     } catch {

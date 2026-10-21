@@ -235,6 +235,109 @@
   }
 }
 
+// ---- the open list of every <select> ----------------------------------------
+// Customizable select (Chromium 135+): the popup becomes a styled panel instead
+// of the OS list. Keyboard, typeahead and screen readers stay native. Other
+// browsers ignore this block and keep their own list.
+@supports (appearance: base-select) {
+  // select.select outranks the .select { appearance: none } above
+  select,
+  select.select {
+    appearance: base-select;
+    align-items: center; // base-select lays the chosen text out top-aligned
+  }
+
+  // the controls already draw their own chevron
+  select::picker-icon {
+    display: none;
+  }
+
+  ::picker(select) {
+    appearance: base-select;
+    min-width: anchor-size(width);
+    max-height: min(360px, 60vh);
+    margin-block: 6px;
+    padding: 6px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--ground);
+    color: var(--ink);
+    box-shadow: var(--shadow-float);
+    overflow-y: auto;
+    // the ::-webkit-scrollbar rules in _base can't reach a picker, so the
+    // standard properties keep its bar thin and without arrow buttons
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-thumb) transparent;
+    opacity: 0;
+    translate: 0 -4px;
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      translate var(--dur-fast) var(--ease-out),
+      display var(--dur-fast) allow-discrete,
+      overlay var(--dur-fast) allow-discrete;
+  }
+
+  ::picker(select):popover-open {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  @starting-style {
+    ::picker(select):popover-open {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  select option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    outline: none;
+    background: var(--surface-2);
+  }
+
+  select option:checked {
+    font-weight: 650;
+    color: var(--accent);
+  }
+
+  // tick on the right of the chosen option
+  select option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: '✓';
+  }
+}
+
+// ---- filter rows ----------------------------------------------------------
+// A select outside a labelled .field is a filter (sort, category, stars). It
+// sits in a row with the pill search and segmented control, so it takes their
+// shape; on mouse/trackpad all three use the segmented label size. Touch keeps
+// 17px so iOS doesn't zoom on focus.
+.select:not(.field .select) {
+  width: auto;
+  border-radius: var(--radius-pill);
+}
+
+@media (pointer: fine) {
+  .select:not(.field .select),
+  .search-field .input {
+    font-size: var(--text-small);
+  }
+}
+
 // ---- check & radio -------------------------------------------------------
 .check {
   display: inline-flex;
@@ -397,7 +500,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-height: 34px;
+    min-height: calc(var(--control) - 6px); // 44px overall with the 3px track, same as a field beside it
     padding: 0 18px;
     border-radius: var(--radius-pill);
     font-size: var(--text-small);

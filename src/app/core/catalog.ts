@@ -1,4 +1,5 @@
 import { BasketBase, RibbonColour, WrapStyle } from './models';
+import { PHOTOS } from './photos';
 
 /**
  * Sized CDN url for the brand photographs carried over from the original
@@ -11,12 +12,10 @@ export function img(id: string, w = 800): string {
   return `https://images.unsplash.com/photo-${id}?w=${w}&q=72&auto=format&fit=crop`;
 }
 
-export const PIC = {
-  giftRed: '1513885535751-8b9238bd345a',
-  giftKraft: '14365405',
-  giftHands: '1607344645866-009c320b63e0',
-  hamper: '27393960',
-} as const;
+/** Photo ids by name; who took each one is in photos.ts (and on /credits). */
+export const PIC = Object.fromEntries(Object.entries(PHOTOS).map(([k, p]) => [k, p.id])) as {
+  [K in keyof typeof PHOTOS]: (typeof PHOTOS)[K]['id'];
+};
 
 /** Occasions shown as tiles, in order. Counts and pictures come from the catalog. */
 export const OCCASION_DEFS: { id: string; name: string; match: (p: { occasions: string[]; categoryId: string }) => boolean }[] = [

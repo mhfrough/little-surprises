@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
+import { PIC, img } from '../core/catalog';
 import { CatalogService } from '../core/catalog.service';
 import { CategoryCard } from '../shared/cards/category-card';
 import { OccasionTile } from '../shared/cards/occasion-tile';
@@ -10,6 +11,7 @@ import { RevealDirective } from '../shared/reveal.directive';
   selector: 'app-occasions-section',
   imports: [LucideAngularModule, OccasionTile, CategoryCard, RevealDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'bg-photo', '[style.--bg-photo]': 'bg' },
   template: `
     <section class="section" appReveal aria-labelledby="occ-title">
       <div class="container">
@@ -67,6 +69,7 @@ import { RevealDirective } from '../shared/reveal.directive';
   `,
 })
 export class OccasionsSection {
+  protected readonly bg = `url("${img(PIC.kraftFlatlay, 1800)}")`;
   protected readonly I = I;
   protected readonly catalog = inject(CatalogService);
   private readonly rail = viewChild.required<ElementRef<HTMLElement>>('rail');

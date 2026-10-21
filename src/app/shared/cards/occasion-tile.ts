@@ -27,7 +27,7 @@ import { catalogSrcset } from '../thumb';
       background: var(--surface-2);
     }
     img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-out); }
-    .tile:hover img { transform: scale(1.06); }
+    .tile:hover img { transform: scale(1.08) rotate(-2deg); }
     .name { font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
     .count { font-size: var(--text-small); color: var(--ink-3); margin-top: -6px; }
   `,

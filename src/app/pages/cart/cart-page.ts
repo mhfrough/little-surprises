@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { BRAND } from '../../core/catalog';
@@ -13,9 +13,38 @@ import { QtyStepper } from '../../shared/qty-stepper';
 import { WhatsappIcon } from '../../shared/whatsapp-icon';
 import { StarInput } from '../../shared/reviews/star-input';
 import { InboxService } from '../../core/inbox.service';
+import { VouchersService } from '../../core/vouchers.service';
+import { OrdersService } from '../../core/orders.service';
 
 const SLOTS = ['10 am – 2 pm', '2 pm – 6 pm', '6 pm – 10 pm'];
 const SAME_DAY_CUTOFF = 14; // 2 pm
+
+/** The form in progress, in sessionStorage: survives a reload, gone when the tab closes. */
+const DRAFT_KEY = 'ls-checkout-draft';
+/** The shopper's own name and mobile, in localStorage, only after they tick "remember". Never the recipient's details. */
+const ME_KEY = 'ls-checkout-me';
+const DRAFT_TEXT = ['name', 'phone', 'rname', 'rphone', 'address', 'date', 'slot', 'note'];
+const DRAFT_CHECKS = ['surprise', 'hidePrice'];
+
+type Draft = Record<string, string | boolean>;
+
+/** Storage can throw (private mode, blocked site data); a missing draft is never an error. */
+function readStore(store: () => Storage, key: string): Draft | null {
+  try {
+    return JSON.parse(store().getItem(key) ?? 'null');
+  } catch {
+    return null;
+  }
+}
+
+function writeStore(store: () => Storage, key: string, value: Draft | null): void {
+  try {
+    if (value) store().setItem(key, JSON.stringify(value));
+    else store().removeItem(key);
+  } catch {
+    /* not saved; the form still works */
+  }
+}
 
 interface PayMethod {
   id: string;
@@ -92,7 +121,7 @@ const PAYMENTS: PayMethod[] = [
           </div>
         </section>
       } @else {
-        <form class="checkout" (submit)="place($event)" novalidate>
+        <form #checkoutForm class="checkout" (submit)="place($event)" (input)="saveDraft()" (change)="saveDraft()" novalidate>
           <!-- ===================================== left: details -->
           <div class="details">
             <h1 class="t-title">Checkout</h1>
@@ -119,18 +148,21 @@ const PAYMENTS: PayMethod[] = [
                   <input id="c-phone" name="phone" class="input" required type="tel" inputmode="tel" [pattern]="phonePattern" placeholder="0300 1234567" autocomplete="tel" />
                   <span class="field-hint">WhatsApp number if you have one</span></div>
               </div>
+              <label class="check"><input type="checkbox" name="remember" [checked]="remember()" (change)="setRemember($any($event.target).checked)" />
+                Remember my name and number on this device</label>
+              <span class="field-hint remember-hint">Only yours, never the recipient's. Untick to forget them.</span>
             </fieldset>
 
             <fieldset class="block">
               <legend class="t-headline">Who it's for</legend>
               <div class="two">
-                <div class="field"><label for="r-name">Recipient's name</label><input id="r-name" name="rname" class="input" required /></div>
+                <div class="field"><label for="r-name">Recipient's name</label><input id="r-name" name="rname" class="input" required autocomplete="shipping name" /></div>
                 <div class="field"><label for="r-phone">Recipient's mobile</label>
-                  <input id="r-phone" name="rphone" class="input" required type="tel" inputmode="tel" [pattern]="phonePattern" placeholder="0300 1234567" />
+                  <input id="r-phone" name="rphone" class="input" required type="tel" inputmode="tel" [pattern]="phonePattern" placeholder="0300 1234567" autocomplete="shipping tel" />
                   <span class="field-hint">The rider calls before arriving</span></div>
               </div>
               <div class="field"><label for="r-addr">Delivery address in {{ city() }}</label>
-                <textarea id="r-addr" name="address" class="textarea" rows="2" required placeholder="House, street, block, area — e.g. House 12, Street 4, Block 5, Clifton"></textarea>
+                <textarea id="r-addr" name="address" class="textarea" rows="2" required autocomplete="shipping street-address" placeholder="House, street, block, area — e.g. House 12, Street 4, Block 5, Clifton"></textarea>
                 <span class="field-hint">Not {{ city() }}? Change the city at the top of the page; prices and delivery update.</span></div>
               <label class="check"><input type="checkbox" name="surprise" value="yes" /> It's a surprise — don't say who it's from until it's opened</label>
             </fieldset>
@@ -147,7 +179,7 @@ const PAYMENTS: PayMethod[] = [
                 }
               </div>
               @if (day() === 'later') {
-                <div class="field narrow"><label for="d-date">Date</label><input id="d-date" name="date" class="input" type="date" required [min]="dates.after" /></div>
+                <div class="field narrow"><label for="d-date">Date</label><input id="d-date" name="date" class="input" type="date" required [min]="dates.after" [value]="restoredDate" /></div>
               }
               <div class="slots" role="radiogroup" aria-label="Delivery time">
                 @for (s of slots; track s; let first = $first) {
@@ -193,11 +225,37 @@ const PAYMENTS: PayMethod[] = [
               }
             </ul>
 
+            <!-- promo code: a quiet link until wanted; Enter applies the code, never places the order -->
+            <div class="promo">
+              @if (bag.promo(); as p) {
+                <div class="promo-on" [class.is-pending]="!p.ok" role="status">
+                  <lucide-icon [img]="I.TicketPercent" [size]="18" [strokeWidth]="2" />
+                  <span class="promo-text"><strong>{{ bag.promoCode() }}</strong><span>{{ p.ok ? p.voucher.description : p.reason }}</span></span>
+                  <button type="button" class="btn btn-plain btn-sm" (click)="bag.removePromo()" [attr.aria-label]="'Remove promo code ' + bag.promoCode()">Remove</button>
+                </div>
+              } @else if (!promoOpen()) {
+                <button type="button" class="promo-toggle" (click)="openPromo()"><lucide-icon [img]="I.TicketPercent" [size]="16" [strokeWidth]="2" /> Have a promo code?</button>
+              } @else {
+                <div class="promo-field">
+                  <label class="visually-hidden" for="promo-code">Promo code</label>
+                  <input #promoBox id="promo-code" class="input" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Promo code"
+                    [value]="promoInput()" (input)="promoInput.set($any($event.target).value); promoError.set('')"
+                    (keydown.enter)="$event.preventDefault(); applyPromo()"
+                    [attr.aria-invalid]="!!promoError()" [attr.aria-describedby]="promoError() ? 'promo-err' : null" />
+                  <button type="button" class="btn btn-secondary" (click)="applyPromo()">Apply</button>
+                </div>
+                @if (promoError()) { <p id="promo-err" class="field-hint is-error" role="alert">{{ promoError() }}</p> }
+              }
+            </div>
+
             <dl class="totals">
               <div><dt>Subtotal</dt><dd class="t-num">{{ bag.subtotal() | money }}</dd></div>
               <div><dt>Delivery · {{ city() }}</dt><dd class="t-num">{{ bag.deliveryFee() ? (bag.deliveryFee() | money) : 'Free' }}</dd></div>
               <div><dt>Gift wrap & handwritten note</dt><dd>Free</dd></div>
-              @if (toFree() > 0) {
+              @if (bag.discount()) {
+                <div class="saving"><dt>Promo · {{ bag.promoCode() }}</dt><dd class="t-num">−{{ bag.discount() | money }}</dd></div>
+              }
+              @if (toFree() > 0 && !freeDeliveryByCode()) {
                 <div class="nudge"><dt>Add {{ toFree() | money }} more for free delivery</dt><dd></dd></div>
               }
               <div class="grand"><dt>Total</dt><dd class="t-num">{{ bag.total() | money }}</dd></div>
@@ -246,6 +304,7 @@ const PAYMENTS: PayMethod[] = [
     .narrow { max-width: 260px; }
     .input:user-invalid, .textarea:user-invalid { border-color: var(--negative); }
     .mini { display: none; }
+    .remember-hint { margin-top: -8px; padding-left: 30px; }
 
     .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
     .choice {
@@ -269,10 +328,10 @@ const PAYMENTS: PayMethod[] = [
     .summary {
       position: sticky; top: calc(var(--header-h) + 16px);
       display: grid; gap: 18px; padding: 24px; border-radius: var(--radius-lg); background: var(--surface);
-      max-height: calc(100svh - var(--header-h) - 32px); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin;
+      max-height: calc(100svh - var(--header-h) - 32px); overflow: auto; overscroll-behavior: contain;
     }
     .sum-head { display: flex; justify-content: space-between; align-items: center; }
-    .items { display: grid; gap: 14px; max-height: 300px; overflow: auto; padding-right: 4px; scrollbar-width: thin; }
+    .items { display: grid; gap: 14px; max-height: 300px; overflow: auto; padding-right: 4px; }
     .item { display: grid; grid-template-columns: 64px 1fr; gap: 12px; }
     .item img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: var(--surface-2); }
     .i-body { display: grid; gap: 4px; min-width: 0; }
@@ -286,6 +345,25 @@ const PAYMENTS: PayMethod[] = [
     .totals { display: grid; gap: 8px; margin: 0; padding-top: 14px; border-top: 0; font-size: 0.9375rem; }
     .totals div { display: flex; justify-content: space-between; gap: 12px; color: var(--ink-2); }
     .totals dd { margin: 0; }
+    .totals .saving { color: var(--positive); font-weight: 600; }
+    .promo { display: grid; gap: 6px; }
+    .promo-toggle {
+      display: inline-flex; align-items: center; gap: 8px; justify-self: start; padding: 4px 0;
+      font-size: var(--text-small); font-weight: 600; color: var(--accent); text-decoration: underline; text-underline-offset: 3px;
+    }
+    .promo-field { display: flex; gap: 8px; }
+    /* a one-line field paired with a pill button takes the pill shape too, like the newsletter signup */
+    .promo-field .input { flex: 1; min-width: 0; border-radius: var(--radius-pill); background: var(--ground); text-transform: uppercase; letter-spacing: 0.04em; }
+    .promo-field .input::placeholder { text-transform: none; letter-spacing: 0; }
+    .promo-on {
+      display: flex; align-items: center; gap: 10px; padding: 10px 6px 10px 14px; border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--positive) 12%, var(--ground)); color: var(--positive);
+    }
+    .promo-on.is-pending { background: var(--ground); color: var(--ink-2); }
+    .promo-on lucide-icon { flex: none; }
+    .promo-text { display: grid; flex: 1; min-width: 0; font-size: var(--text-small); }
+    .promo-text strong { color: var(--ink); letter-spacing: 0.04em; }
+    .promo-text span { color: var(--ink-2); }
     .totals .nudge { font-size: var(--text-small); color: var(--positive); font-weight: 560; }
     .totals .grand { color: var(--ink); font-size: var(--text-headline); font-weight: 650; letter-spacing: -0.015em; padding-top: 6px; }
 
@@ -372,10 +450,61 @@ export class CartPage {
   });
   protected readonly day = signal<string>('');
 
+  private readonly form = viewChild<ElementRef<HTMLFormElement>>('checkoutForm');
+  protected readonly remember = signal(false);
+  protected restoredDate = '';
+
   constructor() {
     inject(SeoService).set({ title: 'Checkout', path: '/cart', noindex: true });
     const first = this.days().find((d) => !d.disabled);
     this.day.set(first?.id ?? 'later');
+    afterNextRender(() => this.restore());
+  }
+
+  /** Fill the form from this tab's draft, else from the details the shopper asked us to remember. */
+  private restore(): void {
+    const draft = readStore(() => sessionStorage, DRAFT_KEY);
+    const me = readStore(() => localStorage, ME_KEY);
+    this.remember.set(!!me);
+    const form = this.form()?.nativeElement;
+    if (!form) return;
+    const data: Draft = { ...(me ?? {}), ...(draft ?? {}) };
+    const day = this.days().find((d) => d.id === data['day'] && !d.disabled);
+    if (day) this.day.set(day.id);
+    if (PAYMENTS.some((p) => p.id === data['pay'])) this.pay.set(data['pay'] as string);
+    this.restoredDate = (data['date'] as string) ?? '';
+    for (const n of DRAFT_TEXT) {
+      const el = form.elements.namedItem(n) as HTMLInputElement | RadioNodeList | null;
+      if (el && typeof data[n] === 'string') el.value = data[n] as string;
+    }
+    for (const n of DRAFT_CHECKS) {
+      const el = form.elements.namedItem(n) as HTMLInputElement | null;
+      if (el && typeof data[n] === 'boolean') el.checked = data[n] as boolean;
+    }
+    this.noteLen.set(((data['note'] as string) ?? '').length);
+  }
+
+  saveDraft(): void {
+    const form = this.form()?.nativeElement;
+    if (!form) return;
+    const draft: Draft = { day: this.day(), pay: this.pay() };
+    for (const n of DRAFT_TEXT) {
+      const el = form.elements.namedItem(n) as HTMLInputElement | RadioNodeList | null;
+      if (el) draft[n] = el.value;
+    }
+    for (const n of DRAFT_CHECKS) {
+      const el = form.elements.namedItem(n) as HTMLInputElement | null;
+      if (el) draft[n] = el.checked;
+    }
+    writeStore(() => sessionStorage, DRAFT_KEY, draft);
+  }
+
+  /** Unticking forgets at once; ticking saves now and again when the order is placed. */
+  setRemember(on: boolean): void {
+    this.remember.set(on);
+    const form = this.form()?.nativeElement;
+    const value = (n: string) => (form?.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? '';
+    writeStore(() => localStorage, ME_KEY, on ? { name: value('name'), phone: value('phone') } : null);
   }
 
   /** The current picture for a product line (files are renamed when the catalog is re-imported). */
@@ -400,13 +529,25 @@ export class CartPage {
     const when =
       this.day() === 'today' ? `Today (${this.dates.today})` : this.day() === 'tomorrow' ? `Tomorrow (${this.dates.tomorrow})` : f['date'];
     const fmt = (n: number) => `Rs ${n.toLocaleString('en-PK')}`;
+    // logged for the portal's Customers page; the reference goes in the message
+    const order = this.orders.add({
+      name: f['name'].trim(),
+      phone: f['phone'].trim(),
+      recipient: f['rname'].trim(),
+      city: this.city(),
+      items: this.bag.count(),
+      total: this.bag.total(),
+      payment: f['pay'],
+      promo: this.bag.promo()?.ok ? this.bag.promoCode() : undefined,
+    });
     const text = [
-      `New order from ${BRAND.siteUrl}`,
+      `New order ${order.id} from ${BRAND.siteUrl}`,
       '',
       ...this.bag.items().map((i) => `• ${i.quantity} × ${i.name} — ${fmt(i.unitPrice * i.quantity)}${i.meta ? `\n   ${i.meta}` : ''}`),
       '',
       `Subtotal: ${fmt(this.bag.subtotal())}`,
       `Delivery: ${this.bag.deliveryFee() ? fmt(this.bag.deliveryFee()) : 'Free'}`,
+      ...(this.bag.discount() ? [`Promo ${this.bag.promoCode()}: −${fmt(this.bag.discount())}`] : []),
       `Total: ${fmt(this.bag.total())}`,
       `Payment: ${f['pay']}`,
       '',
@@ -421,10 +562,43 @@ export class CartPage {
       .filter((l, idx, all) => l !== '' || all[idx - 1] !== '')
       .join('\n');
     this.lastOrder = { name: f['name'], phone: f['phone'] };
+    if (this.bag.promo()?.ok) this.vouchers.redeem(this.bag.promoCode());
+    if (this.remember()) writeStore(() => localStorage, ME_KEY, { name: f['name'].trim(), phone: f['phone'].trim() });
+    writeStore(() => sessionStorage, DRAFT_KEY, null);
     const url = `https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(text)}`;
     this.waUrl.set(url);
     window.open(url, '_blank', 'noopener,noreferrer');
     this.sent.set(true);
+  }
+
+  private readonly orders = inject(OrdersService);
+
+  // ---- promo code
+  private readonly vouchers = inject(VouchersService);
+  private readonly promoBox = viewChild<ElementRef<HTMLInputElement>>('promoBox');
+  protected readonly promoOpen = signal(false);
+  protected readonly promoInput = signal('');
+  protected readonly promoError = signal('');
+  protected readonly freeDeliveryByCode = computed(() => {
+    const p = this.bag.promo();
+    return !!p?.ok && p.freeDelivery;
+  });
+
+  openPromo(): void {
+    this.promoOpen.set(true);
+    setTimeout(() => this.promoBox()?.nativeElement.focus());
+  }
+
+  applyPromo(): void {
+    const reason = this.bag.applyPromo(this.promoInput());
+    if (reason) {
+      this.promoError.set(reason);
+      return;
+    }
+    this.promoInput.set('');
+    this.promoOpen.set(false);
+    const saved = this.bag.discount();
+    this.bag.notify(saved ? `${this.bag.promoCode()} applied: you save Rs ${saved.toLocaleString('en-PK')}` : `${this.bag.promoCode()} added`);
   }
 
   // ---- after-order survey → operator inbox

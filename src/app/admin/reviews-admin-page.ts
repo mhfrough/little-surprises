@@ -53,10 +53,10 @@ const PAGE = 15;
                 <td class="text"><strong class="clamp-1">{{ r.title }}</strong><span class="clamp-2">{{ r.text }}</span></td>
                 <td class="prod">
                   @if (productOf(r.productId); as p) {
-                    <a [routerLink]="['/admin/products', p.id]" class="clamp-1">{{ p.name }}</a>
+                    <a [routerLink]="['/admin/products', p.id]" class="clamp-1" [title]="p.name">{{ p.name }}</a>
                   } @else { <span class="t-note">The shop</span> }
                 </td>
-                <td class="who"><span class="clamp-1">{{ r.name }}</span><span class="sub">{{ r.city }} · {{ r.date }}{{ r.verified ? ' · verified' : '' }}</span></td>
+                <td class="who"><span class="clamp-1" [title]="r.name">{{ r.name }}</span><span class="sub">{{ r.city }} · {{ r.date }}{{ r.verified ? ' · verified' : '' }}</span></td>
                 <td><span class="adm-pill" [class.is-warn]="r.status === 'pending'" [class.is-good]="r.status === 'published'" [class.is-bad]="r.status === 'hidden'">{{ label[r.status] }}</span></td>
                 <td class="row-actions">
                   @if (r.status === 'pending') {
@@ -79,13 +79,12 @@ const PAGE = 15;
     </div>
   `,
   styles: `
-    .text { max-width: 420px; }
+    /* Tables ignore max-width on cells, so the caps sit on the (block) contents; that's what lets the ellipsis kick in. */
+    .text > * { max-width: 420px; }
     .text strong { display: block; font-weight: 600; }
     .text span { color: var(--ink-2); }
-    .prod { max-width: 220px; }
-    .prod a { color: var(--accent); font-weight: 560; }
-    .who { max-width: 180px; }
-    .who span { display: block; }
+    .prod a { display: block; max-width: 220px; color: var(--accent); font-weight: 560; }
+    .who span { display: block; max-width: 180px; }
     .sub { font-size: 0.75rem; color: var(--ink-3); }
     .row-actions { white-space: nowrap; text-align: right; }
     .row-actions .btn { margin-right: 4px; }

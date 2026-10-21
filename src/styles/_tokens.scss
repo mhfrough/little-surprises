@@ -101,6 +101,8 @@
   // Type — one family does the work; Cinzel is reserved for the wordmark
   --font-text: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-brand: 'Cinzel', Georgia, serif;
+  --font-stars: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'Apple Symbols', sans-serif; // ★ ⯪ ☆ from @mhfrough/star-rating
+  --star-scale: 1.4; // the ★ glyph inks only ~70% of its em; at 1.4 a star is a touch taller than the digits beside it
 
   // Five sizes, no more
   --text-display: clamp(2.75rem, 1.55rem + 4.6vw, 5.5rem);   // 44 → 88

@@ -2,6 +2,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { BASKET_BASES, RIBBONS, WRAPS } from './catalog';
 import { CityStore } from './catalog.service';
 import { BasketLine, Product } from './models';
+import { VouchersService, normalise } from './vouchers.service';
 
 /** One row of the bag: a product, or a basket the customer built. */
 export interface CartItem {
@@ -19,6 +20,7 @@ export interface CartItem {
 }
 
 const STORAGE_KEY = 'gw-bag';
+const PROMO_KEY = 'gw-promo';
 const FREE_DELIVERY_FROM = 10000;
 
 /** The bag, kept on this device until checkout (no backend yet). Also owns the toast. */
@@ -37,7 +39,16 @@ export class BagStore {
     return this.city() === 'karachi' ? 250 : 450;
   });
   readonly freeDeliveryFrom = FREE_DELIVERY_FROM;
-  readonly total = computed(() => this.subtotal() + this.deliveryFee());
+
+  /** The promo code on this bag, re-checked as the bag changes (min spend, expiry). */
+  private readonly vouchers = inject(VouchersService);
+  readonly promoCode = signal<string>(loadPromo());
+  readonly promo = computed(() => (this.promoCode() ? this.vouchers.check(this.promoCode(), this.subtotal(), this.deliveryFee()) : null));
+  readonly discount = computed(() => {
+    const p = this.promo();
+    return p?.ok ? p.discount : 0;
+  });
+  readonly total = computed(() => Math.max(0, this.subtotal() + this.deliveryFee() - this.discount()));
 
   constructor() {
     effect(() => {
@@ -47,6 +58,31 @@ export class BagStore {
         /* storage blocked — the bag lasts this visit */
       }
     });
+    effect(() => {
+      try {
+        if (this.promoCode()) localStorage.setItem(PROMO_KEY, this.promoCode());
+        else localStorage.removeItem(PROMO_KEY);
+      } catch {
+        /* as above */
+      }
+    });
+  }
+
+  /**
+   * Put a code on the bag. Returns the reason when it can't be used at all; a
+   * real code that only needs a bigger bag stays on and starts working once it qualifies.
+   */
+  applyPromo(code: string): string | null {
+    const c = normalise(code);
+    if (!c) return 'Type a code first.';
+    const check = this.vouchers.check(c, this.subtotal(), this.deliveryFee());
+    if (!check.ok && !check.keep) return check.reason;
+    this.promoCode.set(c);
+    return null;
+  }
+
+  removePromo(): void {
+    this.promoCode.set('');
   }
 
   add(p: Product, quantity = 1): void {
@@ -79,12 +115,21 @@ export class BagStore {
 
   clear(): void {
     this.items.set([]);
+    this.promoCode.set('');
   }
 
   notify(text: string): void {
     clearTimeout(this.timer);
     this.toast.set({ id: Date.now(), text });
     this.timer = setTimeout(() => this.toast.set(null), 3200);
+  }
+}
+
+function loadPromo(): string {
+  try {
+    return localStorage.getItem(PROMO_KEY) ?? '';
+  } catch {
+    return '';
   }
 }
 

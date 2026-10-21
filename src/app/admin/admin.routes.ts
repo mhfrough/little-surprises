@@ -17,6 +17,8 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'categories', loadComponent: () => import('./categories-page').then((m) => m.CategoriesPage) },
       { path: 'inbox', loadComponent: () => import('./inbox-page').then((m) => m.InboxPage) },
       { path: 'reviews', loadComponent: () => import('./reviews-admin-page').then((m) => m.ReviewsAdminPage) },
+      { path: 'vouchers', loadComponent: () => import('./vouchers-page').then((m) => m.VouchersPage) },
+      { path: 'customers', loadComponent: () => import('./customers-page').then((m) => m.CustomersPage) },
     ],
   },
 ];

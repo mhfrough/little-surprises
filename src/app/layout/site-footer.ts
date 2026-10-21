@@ -103,6 +103,7 @@ import { WhatsappIcon } from '../shared/whatsapp-icon';
               <a routerLink="/policies/privacy">Privacy</a>
               <a routerLink="/policies/terms">Terms</a>
               <a routerLink="/sitemap">Sitemap</a>
+              <a routerLink="/credits">Credits</a>
             </span>
           </p>
         </div>

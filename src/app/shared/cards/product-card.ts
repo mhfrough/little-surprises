@@ -73,7 +73,7 @@ import { Rating } from '../rating';
       object-fit: cover;
       transition: transform var(--dur-slow) var(--ease-out);
     }
-    .card:hover img { transform: scale(1.04); }
+    .card:hover img { transform: scale(1.08) rotate(2deg); }
     .is-out img { filter: grayscale(0.85); opacity: 0.7; }
     .status { position: absolute; left: 12px; top: 12px; }
     .wish {

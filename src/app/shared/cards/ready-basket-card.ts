@@ -57,7 +57,8 @@ import { MoneyPipe } from '../money.pipe';
     }
     :host(.is-reversed) .media { order: 2; }
     .media { aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; background: var(--surface-2); }
-    .media img { width: 100%; height: 100%; object-fit: cover; }
+    .media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-out); }
+    :host(:hover) .media img { transform: scale(1.08) rotate(2deg); }
     .body { display: grid; gap: 14px; align-content: center; max-width: 520px; justify-items: start; min-width: 0; }
     .body > * { max-width: 100%; }
     .occasion { color: var(--ink-2); font-weight: 560; }

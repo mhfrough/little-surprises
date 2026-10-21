@@ -33,8 +33,8 @@ import { I } from '../shared/icons';
       animation: rise var(--dur) var(--ease-spring);
     }
     lucide-icon { color: #9ccf8f; flex: none; }
-    .toast:has(a) { padding-right: 8px; }
-    .btn-plain { color: var(--ground); text-decoration: underline; text-underline-offset: 3px; }
+    /* the link sits flush with the same 18px inset as the icon on the left; it keeps its height as a tap target */
+    .btn-plain { padding-inline: 0; color: var(--ground); text-decoration: underline; text-underline-offset: 3px; }
     @keyframes rise { from { opacity: 0; transform: translateY(16px) scale(0.96); } }
   `,
 })

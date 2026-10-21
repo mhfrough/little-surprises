@@ -151,7 +151,8 @@ import { I } from '../shared/icons';
     }
     :host(.is-scrolled) .bar { background: var(--surface); }
     .inner { display: flex; align-items: center; gap: 24px; height: var(--header-h); }
-    .brand { flex: none; border-radius: 8px; }
+    /* flex, not block: a block wraps the inline logo in a line box whose descender space nudges it up */
+    .brand { flex: none; display: flex; align-items: center; border-radius: 8px; }
     /* clipped, so before the fit check runs the links can be cut short but never slide under the search */
     .links { display: flex; gap: 4px; margin: -6px auto; padding: 6px; min-width: 0; overflow: hidden; } /* padding keeps focus rings inside the clip */
     .links a { white-space: nowrap; flex: none; }

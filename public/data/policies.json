@@ -1,0 +1,141 @@
+[
+  {
+    "slug": "delivery",
+    "title": "Delivery policy",
+    "summary": "Where we deliver, how fast, and what it costs.",
+    "updated": "2026-10-20",
+    "sections": [
+      {
+        "heading": "Karachi",
+        "body": [
+          "Orders confirmed before 2 pm are delivered the same day across Karachi, including Clifton, DHA, Gulshan-e-Iqbal, Gulistan-e-Jauhar, North Nazimabad, PECHS, Bahadurabad and Malir.",
+          "Orders confirmed after 2 pm are delivered the next day. You can pick a delivery slot at checkout: 10 am – 2 pm, 2 – 6 pm or 6 – 10 pm.",
+          "Delivery in Karachi costs Rs 250. It is free on orders of Rs 10,000 or more."
+        ]
+      },
+      {
+        "heading": "Other cities",
+        "body": [
+          "We deliver to most cities in Pakistan through our courier partners. Delivery usually takes 2 – 4 working days.",
+          "Cakes and fresh flowers are made by local partners in each city, so the design may differ slightly from the picture. Some items are available in Karachi only; the shop shows only what can reach the city you choose.",
+          "Delivery outside Karachi costs Rs 450. It is free on orders of Rs 10,000 or more."
+        ]
+      },
+      {
+        "heading": "On the day",
+        "body": [
+          "Our rider calls the recipient before arriving. If the recipient cannot be reached after two calls, we contact you to arrange a new time. A second delivery attempt may be charged.",
+          "Please give a complete address and a phone number the recipient will answer. Surprise deliveries are fine — tell us in the order note and we will not mention who it is from."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "refunds",
+    "title": "Refunds and cancellations",
+    "summary": "What happens if something is wrong, or you change your mind.",
+    "updated": "2026-10-20",
+    "sections": [
+      {
+        "heading": "Cancelling an order",
+        "body": [
+          "You can cancel free of charge until we start preparing your order. For same-day orders that is usually within an hour of confirmation.",
+          "Custom baskets, cakes and fresh flowers cannot be cancelled once they are being prepared."
+        ]
+      },
+      {
+        "heading": "If something arrives damaged or wrong",
+        "body": [
+          "Send us a photo on WhatsApp within 24 hours of delivery. We will replace the item or refund it, whichever you prefer.",
+          "Perishable items (cakes, flowers, mithai) must be reported on the day of delivery."
+        ]
+      },
+      {
+        "heading": "How refunds are paid",
+        "body": [
+          "Card and bank-transfer payments are refunded to the original account within 7 – 10 working days.",
+          "Cash-on-delivery orders are refunded by bank transfer or as store credit, whichever you choose."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "privacy",
+    "title": "Privacy policy",
+    "summary": "What we collect, why, and how to ask us to delete it.",
+    "updated": "2026-10-20",
+    "sections": [
+      {
+        "heading": "What we collect",
+        "body": [
+          "Your name, phone number and email; the recipient's name, phone number and address; your gift note; and your order history.",
+          "Your basket and city choice are kept in your own browser so they are still there when you come back."
+        ]
+      },
+      {
+        "heading": "Why we use it",
+        "body": [
+          "To make and deliver your order, to contact you or the recipient about it, and, only if you ask, to send occasion reminders and offers.",
+          "We never sell your details. We share the recipient's name, phone and address with the rider or courier delivering the gift, and nothing more."
+        ]
+      },
+      {
+        "heading": "Your choices",
+        "body": [
+          "You can ask us to correct or delete your details at any time by WhatsApp or email. You can unsubscribe from our messages with one reply."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "terms",
+    "title": "Terms of service",
+    "summary": "The agreement between you and Little Surprises when you order.",
+    "updated": "2026-10-20",
+    "sections": [
+      {
+        "heading": "Orders and prices",
+        "body": [
+          "All prices are in Pakistani rupees and include packaging. An order is confirmed when we send you a confirmation by WhatsApp, SMS or email.",
+          "Prices of some items differ by city; you pay the price shown for the delivery city you chose."
+        ]
+      },
+      {
+        "heading": "Products and pictures",
+        "body": [
+          "Pictures show how a product usually looks. Flowers, cakes and hampers are made by hand, so colours and arrangement may vary. If an item is unavailable we will offer a substitute of equal or higher value, or a refund."
+        ]
+      },
+      {
+        "heading": "Payment",
+        "body": [
+          "We accept cash on delivery, bank transfer and card. For orders above Rs 25,000 or outside Karachi we may ask for advance payment."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "faq",
+    "title": "Frequently asked questions",
+    "summary": "Quick answers about gifting with us.",
+    "updated": "2026-10-20",
+    "sections": [
+      {
+        "heading": "Can I add a personal note?",
+        "body": ["Yes, every order includes a free handwritten note on our gift tag. Add it in the basket builder or at checkout."]
+      },
+      {
+        "heading": "Can I hide the price from the recipient?",
+        "body": ["Yes. We never put prices or receipts inside the gift."]
+      },
+      {
+        "heading": "Do you do bulk or corporate orders?",
+        "body": ["Yes, with no minimum. We can add your logo to the tag and deliver to many addresses from one list. Message us on WhatsApp for a quote."]
+      },
+      {
+        "heading": "Can I change what's inside a ready-made basket?",
+        "body": ["Yes. Use the basket builder to start from any basket and add or remove treats."]
+      }
+    ]
+  }
+]

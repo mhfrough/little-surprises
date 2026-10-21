@@ -1,0 +1,36 @@
+{
+  "name": "little-surprises-reel",
+  "root": ".",
+  "page": "little-surprises-reel.html",
+  "port": 8137,
+  "fps": 30,
+  "scale": 2,
+  "crf": 16,
+  "work": ".reel-work",
+  "out": "videos/little-surprises-reel.mp4",
+  "poster_t": 4.5,
+  "music": {
+    "file": "little-surprises-bgm.mp3",
+    "offset": 0.0,
+    "gain_db": -14,
+    "fade_out": 1.2
+  },
+  "voiceover": {
+    "file": null,
+    "offset": 0.0,
+    "mute": "",
+    "duck_db": -9
+  },
+  "recipe": {
+    "style": "pastel-soft",
+    "structure": "speedrun",
+    "layout": "top-tight",
+    "background": "colorblock-shift",
+    "transition": "circle-wipe",
+    "headline": "word-pop",
+    "hook": "strike-chips",
+    "frame": "browser-window",
+    "cta": "sticker-pile",
+    "seed": 725215728
+  }
+}

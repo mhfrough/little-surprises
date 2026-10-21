@@ -1,0 +1,482 @@
+<!-- Local navigation (Apple product-page pattern): title, chapters, appearance -->
+<nav class="localnav" aria-label="Design system">
+  <div class="container localnav-inner">
+    <a routerLink="/design" class="localnav-title">Design system</a>
+    <div class="localnav-links">
+      @for (c of chapters; track c.id) {
+        <a routerLink="/design" [fragment]="c.id">{{ c.label }}</a>
+      }
+    </div>
+    <div class="segmented theme" role="group" aria-label="Appearance">
+      <button type="button" [attr.aria-pressed]="theme() === 'light'" (click)="setTheme('light')">Light</button>
+      <button type="button" [attr.aria-pressed]="theme() === 'dark'" (click)="setTheme('dark')">Dark</button>
+      <button type="button" [attr.aria-pressed]="theme() === 'system'" (click)="setTheme('system')">Auto</button>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <!-- ===================================================== Intro -->
+  <header class="container intro" appReveal>
+    <app-brand-mark [size]="64" [wordmark]="false" data-reveal />
+    <h1 class="t-display" data-reveal>The Little Surprises design system</h1>
+    <p class="t-lead" data-reveal>
+      Every colour, type size, control, card and section the shop is built from, live and working. Change the appearance
+      in the bar above to see each one in dark mode.
+    </p>
+    <div class="principles" data-reveal>
+      <p><strong>Content first.</strong> The photograph and the product carry the page; the chrome around them stays quiet.</p>
+      <p><strong>One accent.</strong> Wine is for actions. Rose is the ribbon, and never the colour of small text.</p>
+      <p><strong>Tone, not lines.</strong> Surfaces part with a step in colour, never a border or a resting shadow.</p>
+      <p><strong>The tag is the signature.</strong> The “For you” tag from the logo carries the customer's own words.</p>
+    </div>
+  </header>
+
+  <!-- ===================================================== Colour -->
+  <section id="colour" class="container chapter" aria-labelledby="h-colour">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-colour" class="t-title" data-reveal>Colour</h2>
+      <p class="t-muted" data-reveal>
+        Taken from the logo: the wine box, the rose ribbon, the sage leaf. One ground, one ink, one accent. Contrast is
+        measured against white.
+      </p>
+    </div>
+
+    @for (g of colourGroups; track g.title) {
+      <div class="spec" appReveal>
+        <div class="spec-head" data-reveal>
+          <h3 class="t-headline">{{ g.title }}</h3>
+          <p class="t-small t-muted">{{ g.note }}</p>
+        </div>
+        <ul class="swatches" role="list" data-reveal>
+          @for (s of g.swatches; track s.token) {
+            <li class="swatch">
+              <span class="chip-colour" [style.background]="'var(' + s.token + ')'"></span>
+              <span class="sw-name">{{ s.name }}</span>
+              <span class="sw-role">{{ s.role }}</span>
+              <code class="sw-hex">{{ s.light }} · {{ s.dark }}</code>
+              @if (ratio(s); as r) {
+                <span class="sw-ratio t-num">{{ r }} on white</span>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
+
+  <!-- ===================================================== Type -->
+  <section id="type" class="container chapter" aria-labelledby="h-type">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-type" class="t-title" data-reveal>Type</h2>
+      <p class="t-muted" data-reveal>
+        Inter with optical sizing does all the work, close to Apple's SF Pro. Five sizes, no more. Cinzel is kept for the
+        wordmark only, exactly as in the logo.
+      </p>
+    </div>
+    <div class="type-list" appReveal>
+      @for (t of typeScale; track t.role) {
+        <div class="type-row" data-reveal>
+          <div class="type-meta">
+            <strong>{{ t.role }}</strong>
+            <span class="t-small t-note">{{ t.spec }}</span>
+          </div>
+          <p [class]="t.cls">{{ t.sample }}</p>
+        </div>
+      }
+      <div class="type-row" data-reveal>
+        <div class="type-meta">
+          <strong>Wordmark</strong>
+          <span class="t-small t-note">Cinzel 500 · +0.05em · logo only</span>
+        </div>
+        <app-brand-mark [size]="48" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== Layout -->
+  <section id="layout" class="container chapter" aria-labelledby="h-layout">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-layout" class="t-title" data-reveal>Layout</h2>
+      <p class="t-muted" data-reveal>
+        A 4-point scale, one pair of outer margins (16 to 32px), sections 88 to 168px apart, a 1320px measure.
+      </p>
+    </div>
+
+    <div class="layout-grid" appReveal>
+      <div class="spec" data-reveal>
+        <h3 class="t-headline">Spacing</h3>
+        <ul class="spaces" role="list">
+          @for (s of spaces; track s) {
+            <li><span class="t-small t-num">{{ s }}</span><span class="bar" [style.width.px]="s * 2"></span></li>
+          }
+        </ul>
+      </div>
+
+      <div class="spec" data-reveal>
+        <h3 class="t-headline">Corners</h3>
+        <ul class="radii" role="list">
+          @for (r of radii; track r.token) {
+            <li>
+              <span class="radius-box" [style.border-radius]="'var(' + r.token + ')'"></span>
+              <strong class="t-small">{{ r.name }} · {{ r.px === 999 ? 'capsule' : r.px + 'px' }}</strong>
+              <span class="t-small t-note">{{ r.use }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="spec" data-reveal>
+        <h3 class="t-headline">Depth</h3>
+        <div class="depth">
+          <div class="depth-rest"><strong>At rest</strong><span class="t-small t-muted">A step in tone. Cards, rows, panels.</span></div>
+          <div class="depth-float"><strong>Floating</strong><span class="t-small t-muted">A shadow, only for what truly floats: menus, sheets, toasts.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== Icons & motion -->
+  <section id="icons" class="container chapter" aria-labelledby="h-icons">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-icons" class="t-title" data-reveal>Icons and motion</h2>
+      <p class="t-muted" data-reveal>
+        Lucide line icons at a 1.8 stroke, sized to the text beside them, always with a label for screen readers. Motion
+        uses transform and opacity only, and every move has a reduced-motion fallback.
+      </p>
+    </div>
+    <ul class="icons" role="list" appReveal>
+      @for (n of iconNames; track n) {
+        <li data-reveal><lucide-icon [img]="I[n]" [size]="24" [strokeWidth]="1.8" /><span>{{ n }}</span></li>
+      }
+    </ul>
+
+    <div class="motion" appReveal>
+      <dl class="motion-tokens" data-reveal>
+        @for (m of motion; track m.token) {
+          <div><dt>{{ m.name }} <span class="t-num">{{ m.value }}</span></dt><dd class="t-small t-muted">{{ m.use }}</dd></div>
+        }
+        <div><dt>Ease</dt><dd class="t-small t-muted">cubic-bezier(0.2, 0.8, 0.2, 1); a soft spring for selection</dd></div>
+      </dl>
+      <div class="motion-demo" data-reveal>
+        @for (k of [motionKey()]; track k) {
+          <div class="demo-row">
+            @for (n of [0, 1, 2]; track n) {
+              <span class="demo-tile" [style.animation-delay]="n * 70 + 'ms'"></span>
+            }
+          </div>
+        }
+        <button type="button" class="btn btn-secondary btn-sm" (click)="motionKey.set(motionKey() + 1)">Replay entrance</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== Controls -->
+  <section id="controls" class="container chapter" aria-labelledby="h-controls">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-controls" class="t-title" data-reveal>Controls</h2>
+      <p class="t-muted" data-reveal>
+        Capsule buttons, flat, one fill. 44px is the default height so every target is thumb-sized. Labels say what will
+        happen.
+      </p>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Buttons</h3></div>
+      <div class="stage" data-reveal>
+        <div class="row">
+          <button type="button" class="btn btn-primary">Add to bag</button>
+          <button type="button" class="btn btn-secondary">Change what's inside</button>
+          <button type="button" class="btn btn-plain">See all gifts</button>
+          <button type="button" class="btn btn-icon" aria-label="Save to wishlist"><lucide-icon [img]="I.Heart" [size]="20" [strokeWidth]="1.8" /></button>
+          <button type="button" class="btn btn-icon btn-primary" aria-label="Add"><lucide-icon [img]="I.Plus" [size]="20" [strokeWidth]="2.2" /></button>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-primary btn-sm">Small</button>
+          <button type="button" class="btn btn-primary">Default</button>
+          <button type="button" class="btn btn-primary btn-lg">Large</button>
+          <button type="button" class="btn btn-primary" (click)="fakeLoad()" [attr.aria-busy]="loading()">
+            @if (loading()) { <span class="btn-spinner" aria-hidden="true"></span> Adding… } @else { <lucide-icon [img]="I.ShoppingBag" [size]="18" [strokeWidth]="2" /> Try loading }
+          </button>
+          <button type="button" class="btn btn-primary" disabled>Disabled</button>
+        </div>
+      </div>
+      <div class="stage stage-dark" data-reveal>
+        <button type="button" class="btn btn-on-dark">Ask for a quote</button>
+        <span class="t-small">On the plum field, the action flips to blush.</span>
+      </div>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Fields</h3><p class="t-small t-muted">A filled well, no outline at rest. Focus draws the accent.</p></div>
+      <div class="stage form-grid" data-reveal>
+        <div class="field">
+          <label for="f-name">Recipient's name</label>
+          <input id="f-name" class="input" placeholder="Who is it for?" />
+          <span class="field-hint">We print this on the tag.</span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Recipient's phone</label>
+          <input id="f-phone" class="input" value="0300 12" aria-invalid="true" aria-describedby="f-phone-err" />
+          <span id="f-phone-err" class="field-hint is-error">Enter an 11-digit number so the rider can call ahead.</span>
+        </div>
+        <div class="field">
+          <label for="f-search">Search</label>
+          <div class="search-field">
+            <lucide-icon [img]="I.Search" [size]="18" [strokeWidth]="2" />
+            <input id="f-search" class="input" type="search" placeholder="Search gifts, flowers, baskets" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-slot">Delivery slot</label>
+          <select id="f-slot" class="select">
+            <option>Today, 4 – 8 pm</option>
+            <option>Tomorrow, 10 am – 2 pm</option>
+            <option>Tomorrow, 4 – 8 pm</option>
+          </select>
+        </div>
+        <div class="field span-2">
+          <label for="f-note">Gift note</label>
+          <textarea id="f-note" class="textarea" maxlength="160" placeholder="Write a little message" [value]="noteDemo()"
+            (input)="noteDemo.set($any($event.target).value)"></textarea>
+          <span class="field-hint t-num">{{ noteDemo().length }} / 160</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Choices</h3></div>
+      <div class="stage choice-grid" data-reveal>
+        <fieldset>
+          <legend class="t-small t-strong">Add-ons</legend>
+          <label class="check"><input type="checkbox" checked /> Greeting card</label>
+          <label class="check"><input type="checkbox" /> Balloon bunch</label>
+        </fieldset>
+        <fieldset>
+          <legend class="t-small t-strong">Payment</legend>
+          <label class="check"><input type="radio" name="pay" checked /> Cash on delivery</label>
+          <label class="check"><input type="radio" name="pay" /> Card</label>
+        </fieldset>
+        <fieldset>
+          <legend class="t-small t-strong">Options</legend>
+          <label class="switch"><span>Hide prices on the receipt</span><input type="checkbox" role="switch" [checked]="switchA()" (change)="switchA.set(!switchA())" /></label>
+          <label class="switch"><span>Text me when delivered</span><input type="checkbox" role="switch" /></label>
+        </fieldset>
+        <div class="stack">
+          <span class="t-small t-strong">Quantity</span>
+          <app-qty-stepper [(value)]="qty" [min]="1" [max]="9" label="Vanilla Amber Candle" />
+          <span class="t-small t-strong">Segmented control</span>
+          <div class="segmented" role="group" aria-label="Sort">
+            @for (s of ['All', 'Under Rs 3,000', 'Bestsellers']; track s) {
+              <button type="button" [attr.aria-pressed]="seg() === s" (click)="seg.set(s)">{{ s }}</button>
+            }
+          </div>
+        </div>
+        <div class="stack span-all">
+          <span class="t-small t-strong">Filter chips</span>
+          <div class="chip-row">
+            @for (c of ['Under Rs 3,000', 'Same day', 'Flowers', 'Eid', 'For him', 'For her', 'Vegan']; track c) {
+              <button type="button" class="chip" [attr.aria-pressed]="chips().includes(c)" (click)="toggleChip(c)">
+                @if (chips().includes(c)) { <lucide-icon [img]="I.Check" [size]="14" [strokeWidth]="2.6" /> }
+                {{ c }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Feedback</h3><p class="t-small t-muted">Feedback lives in the interface, never in an alert.</p></div>
+      <div class="stage feedback-grid" data-reveal>
+        <div class="stack">
+          <span class="t-small t-strong">Status labels</span>
+          <div class="row">
+            <span class="status is-surface">Bestseller</span>
+            <span class="status is-new">New</span>
+            <span class="status is-sale">Save Rs 500</span>
+            <span class="status is-muted">Sold out</span>
+          </div>
+          <span class="t-small t-strong">Rating and price</span>
+          <div class="row">
+            <app-rating [value]="4.8" [count]="128" />
+            <span class="price">{{ 2900 | money }} <s>{{ 3400 | money }}</s></span>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="notice is-positive"><lucide-icon [img]="I.CircleCheck" [size]="18" [strokeWidth]="2" /><span>Delivery available to this address today.</span></div>
+          <div class="notice is-negative"><lucide-icon [img]="I.CircleAlert" [size]="18" [strokeWidth]="2" /><span>Peonies are out of season. We'll swap in garden roses unless you choose otherwise.</span></div>
+          <div class="notice"><lucide-icon [img]="I.Truck" [size]="18" [strokeWidth]="2" /><span>Order in the next 2 h 14 min for delivery today.</span></div>
+        </div>
+        <div class="stack">
+          <span class="t-small t-strong">Basket filled</span>
+          <div class="meter" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="6" aria-label="Basket filled"><span style="width: 66%"></span></div>
+          <span class="t-small t-strong">Loading</span>
+          <div class="skeleton-card" aria-hidden="true">
+            <span class="skeleton sk-img"></span><span class="skeleton sk-line"></span><span class="skeleton sk-line short"></span>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="bag.notify('Belco Signature Basket added to your bag')">Show a toast</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== Gift tag -->
+  <section id="tag" class="chapter tag-chapter" aria-labelledby="h-tag">
+    <div class="container tag-grid" appReveal>
+      <div class="tag-copy">
+        <h2 id="h-tag" class="t-title" data-reveal>The gift tag</h2>
+        <p data-reveal>
+          The one thing Little Surprises is remembered by. It comes straight from the logo, and on the site it carries what the
+          customer writes, tied on with the ribbon they chose. It appears in the hero, the builder summary and the order
+          confirmation, and nowhere else.
+        </p>
+        <div class="tag-form" data-reveal>
+          <div class="field">
+            <label for="t-to">For</label>
+            <input id="t-to" class="input" [value]="tagTo()" (input)="tagTo.set($any($event.target).value)" maxlength="24" />
+          </div>
+          <div class="field">
+            <label for="t-note">Note</label>
+            <textarea id="t-note" class="textarea" rows="2" maxlength="120" [value]="tagNote()" (input)="tagNote.set($any($event.target).value)"></textarea>
+          </div>
+          <div class="field">
+            <label for="t-from">Signed</label>
+            <input id="t-from" class="input" [value]="tagFrom()" (input)="tagFrom.set($any($event.target).value)" maxlength="32" />
+          </div>
+          <div class="field">
+            <span class="field-label" id="t-rib">Ribbon</span>
+            <div class="ribbon-row" role="radiogroup" aria-labelledby="t-rib">
+              @for (r of ribbons; track r.id) {
+                <button type="button" role="radio" class="rib" [style.--c]="r.hex" [attr.aria-checked]="tagRibbon() === r.hex"
+                  [attr.aria-label]="r.name" (click)="tagRibbon.set(r.hex)"></button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tag-stage" data-reveal>
+        <app-gift-tag size="lg" [to]="tagTo()" [note]="tagNote()" [from]="tagFrom()" [ribbon]="tagRibbon()" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== Cards -->
+  <section id="cards" class="container chapter" aria-labelledby="h-cards">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-cards" class="t-title" data-reveal>Cards</h2>
+      <p class="t-muted" data-reveal>
+        Media on a tone well with 20px corners, text set below the picture, never over it. Each card type has its own
+        composition so neighbouring sections never look alike.
+      </p>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Product card</h3><p class="t-small t-muted">Every state: default, sale, saved, sold out.</p></div>
+      <div class="grid-4" data-reveal>
+        @for (s of productStates(); track s.label) {
+          <div class="state">
+            <span class="state-label t-small t-note">{{ s.label }}</span>
+            <app-product-card [product]="s.product" [wished]="!!s.wished" (add)="bag.add($event)" />
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Occasion tile</h3></div>
+      <div class="grid-5" data-reveal>
+        @for (o of occasions(); track o.id) {
+          <app-occasion-tile [occasion]="o" />
+        }
+      </div>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Category row</h3></div>
+      <div class="grid-3" data-reveal>
+        @for (c of categories(); track c.id) {
+          <app-category-card [category]="c" />
+        }
+      </div>
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Ready-made basket</h3><p class="t-small t-muted">A pre-defined basket: gift it as is, or build one like it.</p></div>
+      @if (readyBasket(); as rb) {
+        <app-ready-basket-card data-reveal [basket]="rb" (add)="bag.add($event)" />
+      }
+    </div>
+
+    <div class="spec" appReveal>
+      <div class="spec-head" data-reveal><h3 class="t-headline">Bag, review and empty state</h3></div>
+      <div class="bag-grid" data-reveal>
+        <div class="bag-lines">
+          <app-cart-line name="Custom basket" [image]="readyBasket()?.images?.[0] ?? ''" [unitPrice]="9400" [(quantity)]="cartQtyA"
+            meta="Kraft weave basket · Blush tissue · Rose pink ribbon · 4 treats · Note: “Happy birthday…”" />
+          @if (cartProduct(); as cp) {
+            <app-cart-line [name]="cp.name" [image]="cp.images[0]" [unitPrice]="cp.price" [(quantity)]="cartQtyB" />
+          }
+          <div class="order">
+            <div><span>Subtotal</span><span class="t-num">{{ 9400 * cartQtyA() + (cartProduct()?.price ?? 0) * cartQtyB() | money }}</span></div>
+            <div><span>Delivery in Karachi</span><span>Rs 250</span></div>
+            <div class="order-total"><span>Total</span><span class="t-num">{{ 9400 * cartQtyA() + (cartProduct()?.price ?? 0) * cartQtyB() + 250 | money }}</span></div>
+            <button type="button" class="btn btn-primary btn-lg btn-block">Check out</button>
+          </div>
+        </div>
+        <div class="bag-side">
+          @if (review(); as rv) {
+            <app-review-card [review]="rv" />
+          }
+          <div class="empty">
+            <app-brand-mark [size]="48" [wordmark]="false" />
+            <h4 class="t-headline">Your bag is empty</h4>
+            <p class="t-small t-muted">Start with an occasion, or build a basket from scratch.</p>
+            <a routerLink="/build-a-basket" class="btn btn-primary btn-sm">Build a basket</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== Builder -->
+  <section id="builder" class="container chapter" aria-labelledby="h-builder">
+    <div class="chapter-head" appReveal>
+      <h2 id="h-builder" class="t-title" data-reveal>Build a basket</h2>
+      <p class="t-muted" data-reveal>
+        The custom flow, working: choose a basket, wrap, ribbon and treats, write the note. The picture, the tag and the
+        price follow every choice. Capacity limits how many treats fit.
+      </p>
+    </div>
+    <app-basket-builder />
+  </section>
+
+  <!-- ===================================================== Sections -->
+  <div id="sections" class="sections-intro container chapter" appReveal>
+    <h2 class="t-title" data-reveal>Page sections</h2>
+    <p class="t-muted" data-reveal>
+      The home page, section by section, at full width. Every section opens with a heading that names it, and no two
+      neighbours share a layout.
+    </p>
+  </div>
+
+  <div class="section-label container"><h3 class="t-small">Full-screen hero slider</h3></div>
+  <app-hero-slider [primary]="false" />
+  <div class="section-label container"><h3 class="t-small">Occasions and categories</h3></div>
+  <app-occasions-section />
+  <div class="section-label container"><h3 class="t-small">Favourites</h3></div>
+  <app-favourites-section />
+  <div class="section-label container"><h3 class="t-small">Two ways to give</h3></div>
+  <app-two-ways-section />
+  <div class="section-label container"><h3 class="t-small">Ready-made baskets</h3></div>
+  <app-ready-baskets-section />
+  <div class="section-label container"><h3 class="t-small">Corporate</h3></div>
+  <app-corporate-section />
+  <div class="section-label container"><h3 class="t-small">Reviews</h3></div>
+  <app-reviews-section />
+  <div class="section-label container"><h3 class="t-small">Instagram and TikTok</h3></div>
+  <app-social-section />
+  <div class="section-label container"><h3 class="t-small">Newsletter</h3></div>
+  <app-newsletter-section />
+  <div class="section-label container"><h3 class="t-small">Footer, below</h3></div>
+</main>

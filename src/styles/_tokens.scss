@@ -1,0 +1,169 @@
+// ===========================================================================
+// Little Surprises — design tokens
+// One ground, one ink, one accent. Surfaces separate by a step in tone,
+// never by a line or a resting shadow. Everything downstream reads tokens.
+// ===========================================================================
+
+@mixin light-tokens {
+  color-scheme: light;
+
+  // Ground & surfaces (tone steps)
+  --ground: #ffffff;
+  --surface: #faf6f7;
+  --surface-2: #f3ecee;
+  --surface-3: #e9dfe3;
+
+  // Ink
+  --ink: #1f1418;    // 17.6:1 on ground
+  --ink-2: #5e4d54;  // 7.9:1 on ground — secondary text
+  --ink-3: #6f5d65;  // 5.9:1 on ground, 5.2:1 on surface-2 — notes, captions
+
+  // Accent: the action colour, and almost nothing else
+  --accent: #7a0f3d;        // 10.7:1 on ground
+  --accent-hover: #63092f;
+  --accent-ink: #ffffff;
+
+  // Brand fields & ribbon tones (decorative fills, never small text)
+  --field: #f7e8ec;         // blush field for whole sections
+  --field-ink: #3d0a20;
+  --field-deep: #2a0a18;    // plum field (corporate, footer)
+  --field-deep-ink: #f7e8ec;
+  --rose: #d86b8a;
+  --blush: #e89cb3;
+  --sage: #6e6d4f;
+  --kraft: #cfae8a;
+
+  // Signal
+  --positive: #3e6b35;
+  --negative: #b3261e;
+
+  // Lines live only inside real form fields
+  --field-line: #d9cbd1;
+  --scrim: rgb(20 8 14 / 0.42);
+  --focus: #d86b8a;
+
+  // WhatsApp green as text on a grey button
+  --wa-ink: #0b6b38;
+
+  // Scrollbars: the ribbon pink on a blush track
+  --scroll-track: #f7e8ec;
+  --scroll-thumb: #d86b8a;
+  --scroll-thumb-hover: #7a0f3d;
+
+  // Floating things only (menus, sheets, toasts)
+  --shadow-float: 0 18px 50px rgb(31 20 24 / 0.16), 0 2px 8px rgb(31 20 24 / 0.06);
+}
+
+@mixin dark-tokens {
+  color-scheme: dark;
+
+  --ground: #121012;
+  --surface: #1a1619;
+  --surface-2: #241e22;
+  --surface-3: #30282d;
+
+  --ink: #f6eff2;
+  --ink-2: #c4b5bc;
+  --ink-3: #9d8d95;
+
+  --accent: #f2a7bf;        // 10.0:1 on ground
+  --accent-hover: #f7c0d1;
+  --accent-ink: #3d0a20;    // 8.8:1 on accent
+
+  --field: #2b1820;
+  --field-ink: #f7dbe4;
+  --field-deep: #1c0a12;
+  --field-deep-ink: #f7e8ec;
+  --rose: #e48aa4;
+  --blush: #f0b2c5;
+  --sage: #a9a77f;
+  --kraft: #c4a27e;
+
+  --positive: #9ccf8f;
+  --negative: #ff8a80;
+
+  --field-line: #43383d;
+  --scrim: rgb(0 0 0 / 0.55);
+  --focus: #f2a7bf;
+
+  --wa-ink: #7ee2a8;
+
+  --scroll-track: #1c1418;
+  --scroll-thumb: #8a3a5c;
+  --scroll-thumb-hover: #e48aa4;
+
+  --shadow-float: 0 18px 50px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.3);
+}
+
+:root {
+  @include light-tokens;
+
+  // Type — one family does the work; Cinzel is reserved for the wordmark
+  --font-text: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-brand: 'Cinzel', Georgia, serif;
+
+  // Five sizes, no more
+  --text-display: clamp(2.75rem, 1.55rem + 4.6vw, 5.5rem);   // 44 → 88
+  --text-title: clamp(1.875rem, 1.35rem + 1.9vw, 2.875rem);  // 30 → 46
+  --text-headline: 1.375rem;                                   // 22
+  --text-body: 1.0625rem;                                      // 17 (Apple default)
+  --text-small: 0.875rem;                                      // 14
+
+  --leading-display: 0.98;
+  --leading-title: 1.06;
+  --leading-text: 1.55;
+  --tracking-display: -0.038em;
+  --tracking-title: -0.026em;
+  --tracking-headline: -0.014em;
+
+  // Space — 4pt base
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+  --section-gap: clamp(88px, 6rem + 4vw, 168px);
+  --gutter: clamp(16px, 4vw, 32px);
+  --page-max: 1320px;
+
+  // Radii — continuous, decided once
+  --radius-sm: 12px;   // fields, small thumbs
+  --radius: 20px;      // cards, media
+  --radius-lg: 32px;   // whole-section fields
+  --radius-pill: 999px; // every button and chip
+
+  // Controls (Apple: 44pt hit target)
+  --control-sm: 36px;
+  --control: 44px;
+  --control-lg: 54px;
+
+  // Motion
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --dur-fast: 160ms;
+  --dur: 260ms;
+  --dur-slow: 520ms;
+  --stagger: 70ms;
+
+  --header-h: 64px;
+  --localnav-h: 52px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+:root[data-theme='light'] {
+  @include light-tokens;
+}

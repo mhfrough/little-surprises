@@ -1,0 +1,57 @@
+{
+  "pace": "look 0.8-1.5 s before each click, typing 5 chars/s",
+  "marks": [
+    [
+      "start (builder open)",
+      0
+    ],
+    [
+      "picked gift box",
+      1.28
+    ],
+    [
+      "continue to wrap",
+      2.53
+    ],
+    [
+      "rose satin",
+      4.17
+    ],
+    [
+      "wine ribbon",
+      5.21
+    ],
+    [
+      "continue to treats",
+      6.04
+    ],
+    [
+      "treat 1",
+      8.03
+    ],
+    [
+      "treat 2",
+      9.04
+    ],
+    [
+      "treat 3",
+      10.06
+    ],
+    [
+      "continue to note",
+      10.89
+    ],
+    [
+      "typed for: Ammi",
+      13.17
+    ],
+    [
+      "birthday note",
+      14.4
+    ],
+    [
+      "review",
+      15.24
+    ]
+  ]
+}

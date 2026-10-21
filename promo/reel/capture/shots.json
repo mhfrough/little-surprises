@@ -1,0 +1,413 @@
+{
+  "s1-basket": {
+    "file": "assets/ui/s1-basket.png",
+    "boxes": {
+      "pick": {
+        "x": 208,
+        "y": 344.8,
+        "w": 164,
+        "h": 276.4
+      },
+      "preview": {
+        "x": 588,
+        "y": 219.2,
+        "w": 380,
+        "h": 635.9
+      },
+      "next": {
+        "x": 318.1,
+        "y": 653.2,
+        "w": 229.9,
+        "h": 54
+      }
+    }
+  },
+  "s1b-basket": {
+    "file": "assets/ui/s1b-basket.png",
+    "boxes": {
+      "pick": {
+        "x": 208,
+        "y": 300.8,
+        "w": 164,
+        "h": 276.4
+      },
+      "preview": {
+        "x": 588,
+        "y": 175.2,
+        "w": 380,
+        "h": 635.9
+      },
+      "next": {
+        "x": 318.1,
+        "y": 609.2,
+        "w": 229.9,
+        "h": 54
+      }
+    }
+  },
+  "s2-wrap": {
+    "file": "assets/ui/s2-wrap.png",
+    "boxes": {
+      "wrap": {
+        "x": 296,
+        "y": 342,
+        "w": 120,
+        "h": 141.4
+      },
+      "ribbon": {
+        "x": 88,
+        "y": 548.8,
+        "w": 44,
+        "h": 44
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 635.9
+      },
+      "next": {
+        "x": 311.8,
+        "y": 624.8,
+        "w": 236.2,
+        "h": 54
+      }
+    }
+  },
+  "s2a-wrap": {
+    "file": "assets/ui/s2a-wrap.png",
+    "boxes": {
+      "wrap": {
+        "x": 296,
+        "y": 342,
+        "w": 120,
+        "h": 141.4
+      },
+      "ribbon": {
+        "x": 88,
+        "y": 548.8,
+        "w": 44,
+        "h": 44
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 635.9
+      },
+      "next": {
+        "x": 311.8,
+        "y": 624.8,
+        "w": 236.2,
+        "h": 54
+      }
+    }
+  },
+  "s2b-wrap": {
+    "file": "assets/ui/s2b-wrap.png",
+    "boxes": {
+      "wrap": {
+        "x": 296,
+        "y": 342,
+        "w": 120,
+        "h": 141.4
+      },
+      "ribbon": {
+        "x": 86.7,
+        "y": 547.5,
+        "w": 46.6,
+        "h": 46.6
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 635.9
+      },
+      "next": {
+        "x": 311.8,
+        "y": 624.8,
+        "w": 236.2,
+        "h": 54
+      }
+    }
+  },
+  "s3-treats": {
+    "file": "assets/ui/s3-treats.png",
+    "boxes": {
+      "add1": {
+        "x": 111.6,
+        "y": 732.2,
+        "w": 83,
+        "h": 36
+      },
+      "add2": {
+        "x": 288.3,
+        "y": 732.2,
+        "w": 83,
+        "h": 36
+      },
+      "add3": {
+        "x": 465,
+        "y": 732.2,
+        "w": 83,
+        "h": 36
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 635.9
+      },
+      "next": {
+        "x": 322.9,
+        "y": 1687.4,
+        "w": 225.1,
+        "h": 54
+      }
+    }
+  },
+  "s3a-treats": {
+    "file": "assets/ui/s3a-treats.png",
+    "boxes": {}
+  },
+  "s3b-treats": {
+    "file": "assets/ui/s3b-treats.png",
+    "boxes": {}
+  },
+  "s3c-treats": {
+    "file": "assets/ui/s3c-treats.png",
+    "boxes": {
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 724.9
+      },
+      "next": {
+        "x": 322.9,
+        "y": 1694.8,
+        "w": 225.1,
+        "h": 54
+      }
+    }
+  },
+  "s4-note": {
+    "file": "assets/ui/s4-note.png",
+    "boxes": {
+      "to": {
+        "x": 32,
+        "y": 330.1,
+        "w": 251,
+        "h": 48.3
+      },
+      "chip": {
+        "x": 32,
+        "y": 640.2,
+        "w": 88.4,
+        "h": 36
+      },
+      "msg": {
+        "x": 32,
+        "y": 432.2,
+        "w": 516,
+        "h": 124
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 724.9
+      },
+      "next": {
+        "x": 304.6,
+        "y": 710.2,
+        "w": 243.4,
+        "h": 54
+      }
+    }
+  },
+  "s4a-note": {
+    "file": "assets/ui/s4a-note.png",
+    "boxes": {
+      "to": {
+        "x": 32,
+        "y": 330.1,
+        "w": 251,
+        "h": 48.3
+      },
+      "chip": {
+        "x": 32,
+        "y": 640.2,
+        "w": 88.4,
+        "h": 36
+      },
+      "msg": {
+        "x": 32,
+        "y": 432.2,
+        "w": 516,
+        "h": 124
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 724.9
+      },
+      "next": {
+        "x": 304.6,
+        "y": 710.2,
+        "w": 243.4,
+        "h": 54
+      }
+    }
+  },
+  "s4b-note": {
+    "file": "assets/ui/s4b-note.png",
+    "boxes": {
+      "to": {
+        "x": 32,
+        "y": 330.1,
+        "w": 251,
+        "h": 48.3
+      },
+      "chip": {
+        "x": 32,
+        "y": 640.2,
+        "w": 88.4,
+        "h": 36
+      },
+      "msg": {
+        "x": 32,
+        "y": 432.2,
+        "w": 516,
+        "h": 124
+      },
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 747.3
+      },
+      "next": {
+        "x": 304.6,
+        "y": 710.2,
+        "w": 243.4,
+        "h": 54
+      }
+    }
+  },
+  "s5-review": {
+    "file": "assets/ui/s5-review.png",
+    "boxes": {
+      "preview": {
+        "x": 588,
+        "y": 174.8,
+        "w": 380,
+        "h": 747.3
+      },
+      "add": {
+        "x": 287.6,
+        "y": 869.1,
+        "w": 260.4,
+        "h": 54
+      },
+      "checkout": {
+        "x": 298.9,
+        "y": 935.1,
+        "w": 249.1,
+        "h": 44
+      }
+    }
+  },
+  "c1-cart": {
+    "file": "assets/ui/c1-cart.png",
+    "boxes": {}
+  },
+  "_cartTexts": [
+    "Your details",
+    "Full name",
+    "Mobile number",
+    "Who it's for",
+    "Recipient's name",
+    "Recipient's mobile",
+    "Delivery address in Karachi",
+    "It's a surprise — don't say who it's from until it's opened",
+    "When",
+    "TodayOrder before 2 pm",
+    "TomorrowAny time slot",
+    "Pick a dateUp to 30 days ahead",
+    "10 am – 2 pm",
+    "2 pm – 6 pm",
+    "6 pm – 10 pm",
+    "Gift note",
+    "We handwrite it on our tag (free, optional)",
+    "Keep prices and receipts out of the gift",
+    "Your order",
+    "Payment",
+    "Cash on deliveryPay the rider",
+    "JazzCash or EasypaisaMobile wallet",
+    "Debit or credit cardVisa, Mastercard",
+    "Bank transfer or RaastIBAN or Raast ID"
+  ],
+  "c2-cart": {
+    "file": "assets/ui/c2-cart.png",
+    "boxes": {
+      "today": {
+        "x": 32,
+        "y": 408.4,
+        "w": 145.3,
+        "h": 99.7
+      },
+      "cod": {
+        "x": 566,
+        "y": 518.8,
+        "w": 332,
+        "h": 23.3
+      },
+      "jazz": {
+        "x": 566,
+        "y": 594.2,
+        "w": 332,
+        "h": 23.3
+      },
+      "wa": {
+        "x": 920,
+        "y": 704,
+        "w": 56,
+        "h": 56
+      },
+      "total": {
+        "x": 552,
+        "y": 423.2,
+        "w": 49.7,
+        "h": 34.1
+      }
+    }
+  },
+  "c3-wa": {
+    "file": "assets/ui/c3-wa.png",
+    "boxes": {
+      "wa": {
+        "x": 917.8,
+        "y": 701.8,
+        "w": 60.5,
+        "h": 60.5
+      },
+      "widget": {
+        "x": 656,
+        "y": 272.8,
+        "w": 320,
+        "h": 421.3
+      }
+    }
+  },
+  "p1-product": {
+    "file": "assets/ui/p1-product.png",
+    "boxes": {}
+  },
+  "h1-home": {
+    "file": "assets/ui/h1-home.png",
+    "boxes": {}
+  }
+}

@@ -46,7 +46,7 @@ export class ReadyBasketsSection {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="container" aria-labelledby="corp-title">
-      <div class="panel" appReveal>
+      <div class="panel decor-gifts decor-from-left" appReveal>
         <div class="copy">
           <h2 id="corp-title" class="t-title" data-reveal>Corporate gifting</h2>
           <p class="lead" data-reveal>

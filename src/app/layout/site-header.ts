@@ -77,7 +77,10 @@ import { I } from '../shared/icons';
           <a routerLink="/cart" class="btn-ghost-icon" [attr.aria-label]="'Bag, ' + bag.count() + ' items'">
             <lucide-icon [img]="I.ShoppingBag" [size]="20" [strokeWidth]="1.8" />
             @if (bag.count()) {
-              <span class="badge t-num">{{ bag.count() }}</span>
+              <!-- keyed on the count, so the badge is redrawn, and pops, every time it changes -->
+              @for (n of [bag.count()]; track n) {
+                <span class="badge t-num motion-pop">{{ n }}</span>
+              }
             }
           </a>
           <a routerLink="/build-a-basket" class="btn btn-primary btn-sm cta">Build a basket</a>
@@ -95,10 +98,11 @@ import { I } from '../shared/icons';
           </button>
         </div>
         @for (l of links; track l.link) {
-          <a [routerLink]="l.link" class="sheet-link" (click)="open.set(false)">{{ l.label }}</a>
+          <a [routerLink]="l.link" routerLinkActive="is-active" class="sheet-link" (click)="open.set(false)">{{ l.label }}</a>
         }
-        <a routerLink="/reviews" class="sheet-link" (click)="open.set(false)">Reviews</a>
-        <a routerLink="/contact" class="sheet-link" (click)="open.set(false)">Contact</a>
+        <a routerLink="/reviews" routerLinkActive="is-active" class="sheet-link" (click)="open.set(false)">Reviews</a>
+        <a routerLink="/contact" routerLinkActive="is-active" class="sheet-link" (click)="open.set(false)">Contact</a>
+        <a routerLink="/about" routerLinkActive="is-active" class="sheet-link" (click)="open.set(false)">About us</a>
         <div class="sheet-theme"><span>Theme</span><app-theme-toggle [labels]="true" /></div>
         <a routerLink="/build-a-basket" class="btn btn-primary btn-lg btn-block" (click)="open.set(false)">Build a basket</a>
       </nav>
@@ -177,16 +181,24 @@ import { I } from '../shared/icons';
     }
     .scrim { position: fixed; inset: 0; z-index: 60; background: var(--scrim); animation: fade var(--dur) var(--ease-out); }
     .sheet {
-      position: fixed; z-index: 61; inset: 0 auto 0 0; width: min(88vw, 360px); padding: 16px 20px 24px;
+      /* floats clear of the screen edges, like a card laid over the page */
+      position: fixed; z-index: 61; inset: 12px auto 12px 12px; width: min(calc(100vw - 24px), 360px); padding: 16px 12px 16px;
       display: flex; flex-direction: column; gap: 2px; background: var(--ground); box-shadow: var(--shadow-float);
+      border-radius: var(--radius); overflow-y: auto; overscroll-behavior: contain;
       animation: slide var(--dur) var(--ease-out);
     }
-    .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .sheet-link { font-size: var(--text-headline); font-weight: 600; letter-spacing: -0.015em; padding: 12px 4px; }
-    .sheet-theme { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 12px 4px; color: var(--ink-2); }
+    .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-inline: 8px; }
+    .sheet-link {
+      display: flex; align-items: center; min-height: 48px; padding: 0 12px; border-radius: var(--radius-sm);
+      font-size: 1.125rem; font-weight: 560; letter-spacing: -0.01em; color: var(--ink);
+      transition: background-color var(--dur-fast) var(--ease-out), padding var(--dur-fast) var(--ease-out);
+    }
+    .sheet-link:hover, .sheet-link.is-active { background: var(--surface-2); }
+    .sheet-link.is-active { font-weight: 650; }
+    .sheet-theme { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 12px; color: var(--ink-2); }
     .sheet .btn { margin-top: auto; }
     @keyframes fade { from { opacity: 0; } }
-    @keyframes slide { from { transform: translateX(-100%); } }
+    @keyframes slide { from { transform: translateX(calc(-100% - 12px)); } }
     /* Menu button instead of links: always on tablets and phones; in between, when
        the links measurably don't fit (fonts, zoom and the search width all move that
        point, so it isn't a fixed breakpoint). Compact links stay laid out, invisible,

@@ -6,7 +6,7 @@ import { BRAND } from './catalog';
 
 const ORG_ID = `${BRAND.siteUrl}/#org`;
 const SITE_ID = `${BRAND.siteUrl}/#website`;
-const DEFAULT_IMAGE = 'brand/logo-full.jpeg';
+const DEFAULT_IMAGE = 'brand/logo-full.webp';
 
 /** The business and the site, on every page so any URL stands on its own. */
 const SITE_GRAPH = [
@@ -16,7 +16,7 @@ const SITE_GRAPH = [
     name: BRAND.name,
     slogan: BRAND.line,
     url: `${BRAND.siteUrl}/`,
-    logo: { '@type': 'ImageObject', url: `${BRAND.siteUrl}/brand/logo-full.jpeg`, width: 1254, height: 1254 },
+    logo: { '@type': 'ImageObject', url: `${BRAND.siteUrl}/brand/logo-full.webp`, width: 1254, height: 1254 },
     email: BRAND.email,
     telephone: BRAND.phone,
     areaServed: { '@type': 'City', name: 'Karachi' },

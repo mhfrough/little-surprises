@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, model, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { CatalogService } from '../../core/catalog.service';
@@ -44,9 +44,15 @@ import { Rating } from '../rating';
             }
           </span>
           @if (p.inStock) {
-            <button type="button" class="btn btn-icon btn-primary btn-sm add" [attr.aria-label]="'Add ' + p.name + ' to bag'"
-              (click)="add.emit(p)">
-              <lucide-icon [img]="I.Plus" [size]="18" [strokeWidth]="2.2" />
+            <button type="button" class="btn btn-icon btn-primary btn-sm add" [class.is-added]="added()"
+              [attr.aria-label]="'Add ' + p.name + ' to bag'" (click)="onAdd(p)">
+              @if (added()) {
+                <!-- the plus turns into a tick that draws itself in -->
+                <svg class="motion-draw" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                  stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" pathLength="1" /></svg>
+              } @else {
+                <lucide-icon [img]="I.Plus" [size]="18" [strokeWidth]="2.2" />
+              }
             </button>
           } @else {
             <button type="button" class="btn btn-plain btn-sm">Notify me</button>
@@ -58,6 +64,7 @@ import { Rating } from '../rating';
   styles: `
     :host { display: block; min-width: 0; }
     .card { display: grid; gap: 14px; }
+    .media { transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
     .media {
       position: relative;
       aspect-ratio: 1;
@@ -74,6 +81,20 @@ import { Rating } from '../rating';
       transition: transform var(--dur-slow) var(--ease-out);
     }
     .card:hover img { transform: scale(1.08) rotate(2deg); }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .card:hover .media { transform: translateY(-4px); box-shadow: 0 16px 30px -18px rgb(31 20 24 / 0.45); }
+      .add:not(.is-added):hover lucide-icon { transform: rotate(90deg) scale(1.12); }
+    }
+    .add.is-added { background: var(--positive); }
+    /* saving to the wishlist: the heart pops and a ring spreads from it */
+    .wish { overflow: visible; }
+    .wish::after {
+      content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--rose); opacity: 0; pointer-events: none;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .wish[aria-pressed='true'] lucide-icon { animation: motion-pop 420ms var(--ease-spring); }
+      .wish[aria-pressed='true']::after { animation: motion-ring 560ms var(--ease-out); }
+    }
     .is-out img { filter: grayscale(0.85); opacity: 0.7; }
     .status { position: absolute; left: 12px; top: 12px; }
     .wish {
@@ -111,6 +132,20 @@ export class ProductCard {
   readonly product = input.required<Product>();
   readonly wished = model(false);
   readonly add = output<Product>();
+  /** true for a moment after adding, while the button shows a tick */
+  protected readonly added = signal(false);
+  private addedTimer?: ReturnType<typeof setTimeout>;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.addedTimer));
+  }
+
+  protected onAdd(p: Product): void {
+    this.add.emit(p);
+    this.added.set(true);
+    clearTimeout(this.addedTimer);
+    this.addedTimer = setTimeout(() => this.added.set(false), 1400);
+  }
 
   protected readonly meta = computed(() => {
     const p = this.product();

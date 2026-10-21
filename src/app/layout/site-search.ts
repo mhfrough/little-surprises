@@ -206,8 +206,9 @@ const MAX_PRODUCTS = 6;
 
     .scrim { position: fixed; inset: 0; z-index: 90; background: var(--scrim); animation: fade var(--dur) var(--ease-out); }
     .sheet {
-      position: fixed; left: 0; right: 0; top: 0; z-index: 91; max-height: min(86vh, 760px); overflow: auto;
-      background: var(--ground); box-shadow: var(--shadow-float); border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      /* floats clear of the screen edges, like a card laid over the page */
+      position: fixed; left: 12px; right: 12px; top: 12px; z-index: 91; max-height: min(calc(100dvh - 24px), 760px); overflow: auto;
+      background: var(--ground); box-shadow: var(--shadow-float); border-radius: var(--radius-lg);
       animation: drop var(--dur) var(--ease-out); overscroll-behavior: contain;
     }
     @keyframes fade { from { opacity: 0; } }

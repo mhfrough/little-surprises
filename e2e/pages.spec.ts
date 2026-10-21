@@ -20,6 +20,7 @@ const ROUTES: { name: string; path: string; h1?: RegExp }[] = [
   ...(soldOut ? [{ name: 'product (sold out)', path: `/product/${soldOut.slug}` }] : []),
   { name: 'build a basket', path: '/build-a-basket', h1: /Build a basket/ },
   { name: 'cart (empty)', path: '/cart', h1: /bag is empty/i },
+  { name: 'about', path: '/about', h1: /Every gift tells a story/ },
   { name: 'contact', path: '/contact', h1: /Talk to a real person/ },
   ...policies.map((p) => ({ name: `policy ${p.slug}`, path: `/policies/${p.slug}`, h1: new RegExp(p.title) })),
   { name: 'sitemap', path: '/sitemap', h1: /Sitemap/ },

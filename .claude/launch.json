@@ -4,8 +4,22 @@
     {
       "name": "web",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/@angular/cli/bin/ng.js", "serve", "--port", "4300"],
-      "port": 4300
+      "runtimeArgs": [
+        "node_modules/@angular/cli/bin/ng.js",
+        "serve",
+        "--port",
+        "4300"
+      ],
+      "port": 4300,
+      "autoPort": false
+    },
+    {
+      "name": "dist",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve-dist.mjs"
+      ],
+      "port": 4400
     }
   ]
 }

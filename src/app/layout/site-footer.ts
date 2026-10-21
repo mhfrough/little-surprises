@@ -74,6 +74,7 @@ import { WhatsappIcon } from '../shared/whatsapp-icon';
           <a routerLink="/policies/refunds">Refunds & cancellations</a>
           <a routerLink="/policies/faq">FAQ</a>
           <a routerLink="/contact">Corporate gifting</a>
+          <a routerLink="/about">About us</a>
           <a routerLink="/cart">Your bag</a>
         </nav>
       </div>
@@ -163,7 +164,9 @@ import { WhatsappIcon } from '../shared/whatsapp-icon';
     .by { font-size: var(--text-small); color: var(--soft); }
 
     .idea { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0; }
-    .heart { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--blush); stroke-width: 1.6; stroke-linejoin: round; }
+    .heart { width: 18px; height: 18px; flex: none; fill: var(--blush); stroke: var(--blush); stroke-width: 1.6; stroke-linejoin: round; transform-origin: 50% 60%; }
+    @keyframes beat { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.22); } 40% { transform: scale(0.96); } 60% { transform: scale(1.12); } }
+    @media (prefers-reduced-motion: no-preference) { .idea:hover .heart { animation: beat 900ms var(--ease-out) infinite; } }
     .name { font-family: var(--font-brand); font-size: 1.125rem; font-weight: 500; letter-spacing: 0.06em; line-height: 1; color: var(--blush); }
 
     .maker {

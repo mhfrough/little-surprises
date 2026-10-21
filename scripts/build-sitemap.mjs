@@ -32,6 +32,7 @@ const urls = [
   { loc: '/', lastmod: catalogDate, changefreq: 'daily', priority: 1.0 },
   { loc: '/shop', lastmod: catalogDate, changefreq: 'daily', priority: 0.9 },
   { loc: '/build-a-basket', lastmod: today, changefreq: 'weekly', priority: 0.9 },
+  { loc: '/about', lastmod: today, changefreq: 'monthly', priority: 0.5 },
   { loc: '/contact', lastmod: today, changefreq: 'monthly', priority: 0.5 },
   { loc: '/reviews', lastmod: today, changefreq: 'daily', priority: 0.6 },
   { loc: '/sitemap', lastmod: catalogDate, changefreq: 'weekly', priority: 0.2 },

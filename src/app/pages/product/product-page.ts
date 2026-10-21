@@ -5,6 +5,7 @@ import { BASKET_CATEGORIES, BRAND } from '../../core/catalog';
 import { CatalogService, cityLabel } from '../../core/catalog.service';
 import { SeoService } from '../../core/seo.service';
 import { BagStore } from '../../core/stores';
+import { bold, clean, waLink } from '../../core/whatsapp';
 import { Breadcrumbs } from '../../shared/breadcrumbs';
 import { ProductCard } from '../../shared/cards/product-card';
 import { I } from '../../shared/icons';
@@ -256,8 +257,18 @@ export class ProductPage {
   });
   protected readonly waLink = computed(() => {
     const p = this.product();
-    const text = p ? `Hi! I'd like to order ${this.qty()} × ${p.name} (Rs ${p.price}) for delivery in ${this.city()}.\n${BRAND.siteUrl}/product/${p.slug}` : '';
-    return `https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(text)}`;
+    const text = p
+      ? [
+          `👋 Hi! I'd like to order:`,
+          '',
+          `🎁 ${bold(`${this.qty()} × ${clean(p.name)}`)}`,
+          `💰 Rs ${p.price.toLocaleString('en-PK')} each`,
+          `📍 Delivery in ${this.city()}`,
+          '',
+          `🔗 ${BRAND.siteUrl}/product/${p.slug}`,
+        ].join('\n')
+      : '';
+    return waLink(text);
   });
 
   toReviews(e: Event): void {

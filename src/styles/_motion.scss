@@ -1,0 +1,165 @@
+// ===========================================================================
+// Motion — small physical answers to what the visitor does. Buttons lift and
+// press, their icons move the way the action goes, photos lean in, pages
+// cross-fade. All of it is decoration: with reduced motion asked for, none of
+// the movement below applies (and _base.scss shortens what's left to nothing).
+// ===========================================================================
+
+@keyframes motion-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+@keyframes motion-wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-12deg); }
+  60% { transform: rotate(9deg); }
+}
+
+@keyframes motion-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes motion-ring {
+  from { opacity: 0.55; transform: scale(0.6); }
+  to { opacity: 0; transform: scale(1.7); }
+}
+
+@keyframes motion-page-out {
+  to { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes motion-page-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+// Icons inside controls always ease, so every movement below is smooth.
+.btn,
+.btn-ghost-icon,
+.chip {
+  lucide-icon,
+  app-whatsapp-icon,
+  app-tiktok-icon {
+    transition: transform var(--dur) var(--ease-spring);
+  }
+}
+
+.btn {
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn-ghost-icon {
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+// A drawn tick: <svg> paths with pathLength="1" (see the bag button on cards).
+.motion-draw path,
+.motion-draw polyline {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) {
+    // Lift a little; the primary action also casts a soft tinted shadow.
+    .btn:not(:disabled, [aria-disabled='true']):hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:not(:disabled, [aria-disabled='true']):hover {
+      box-shadow: 0 10px 22px -12px var(--accent);
+    }
+
+    // The trailing icon points where you're going: it leans that way.
+    .btn:hover > :is(lucide-icon, app-whatsapp-icon):last-child:not(:first-child) {
+      transform: translateX(4px);
+    }
+
+    // A leading icon gives a small wave, once per hover.
+    .btn:hover > :is(lucide-icon, app-whatsapp-icon, app-tiktok-icon):first-child:not(:last-child) {
+      animation: motion-wiggle 520ms var(--ease-out);
+    }
+
+    // Icon-only buttons: the icon itself grows a touch.
+    .btn-icon:hover lucide-icon,
+    .btn-ghost-icon:hover lucide-icon {
+      transform: scale(1.12);
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  // Pressing always wins over the hover lift.
+  .btn:not(:disabled, [aria-disabled='true']):active {
+    transform: translateY(0) scale(0.96);
+    box-shadow: none;
+    transition-duration: 80ms;
+  }
+
+  .chip {
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .motion-draw path,
+  .motion-draw polyline {
+    animation: motion-draw 420ms var(--ease-out) both;
+  }
+
+  .motion-pop {
+    animation: motion-pop 420ms var(--ease-spring);
+  }
+
+  // Focus rings grow in instead of snapping on.
+  :focus-visible {
+    transition: outline-offset var(--dur-fast) var(--ease-out);
+  }
+
+  // ---- page changes (router view transitions): the old page lifts away, the
+  // new one rises in. Only <main> moves; the header and footer just cross-fade
+  // in place, which reads as standing still.
+  main#main {
+    view-transition-name: page;
+  }
+
+  ::view-transition-old(page) {
+    animation: motion-page-out 160ms var(--ease-out) both;
+  }
+
+  ::view-transition-new(page) {
+    animation: motion-page-in 320ms var(--ease-out) 60ms both;
+  }
+
+  ::view-transition-group(root) {
+    animation-duration: 200ms;
+  }
+}
+
+// Without the preference, no cross-fade either: the new page just appears.
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

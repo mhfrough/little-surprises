@@ -5,6 +5,7 @@ import { InboxMessage, InboxService, MessageStatus, MessageType, TYPE_LABEL } fr
 import { BagStore } from '../core/stores';
 import { I } from '../shared/icons';
 import { Rating } from '../shared/rating';
+import { clean, waLink } from '../core/whatsapp';
 
 type Tab = 'all' | MessageType;
 type StatusFilter = 'open' | 'new' | 'resolved' | 'archived' | 'any';
@@ -212,7 +213,7 @@ export class InboxPage {
 
   wa(m: InboxMessage): string {
     const digits = m.contact.replace(/\D/g, '').replace(/^0/, '92');
-    return `https://wa.me/${digits}?text=${encodeURIComponent(`Assalam o Alaikum ${m.name.split(' ')[0]}, this is Little Surprises about “${m.subject}”. `)}`;
+    return waLink(`Assalam o Alaikum ${clean(m.name.split(' ')[0])} 👋\nThis is *Little Surprises* 🎁 about _“${clean(m.subject)}”_.\n\n`, digits);
   }
 
   mail(m: InboxMessage): string {

@@ -12,7 +12,7 @@ import { RevealDirective } from '../shared/reveal.directive';
   imports: [RouterLink, LucideAngularModule, GiftTag, RevealDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="field" appReveal aria-labelledby="two-title">
+    <section class="field decor-gifts" appReveal aria-labelledby="two-title">
       <div class="container inner">
         <h2 id="two-title" class="t-title" data-reveal>Two ways to give</h2>
         <div class="split">

@@ -1,15 +1,16 @@
 import { BasketBase, RibbonColour, WrapStyle } from './models';
 import { PHOTOS } from './photos';
 
+/** Widths each stock photo is kept at, as WebP (scripts/build-site-photos.mjs). */
+export const SITE_WIDTHS = [640, 960, 1600, 2400];
+
 /**
- * Sized CDN url for the brand photographs carried over from the original
- * site (hero, corporate, builder bases). Product photos live in the catalog.
+ * Self-hosted WebP of a stock photograph (hero, sections, builder bases), at the
+ * smallest stored width that covers `w`. Product photos live in the catalog.
  */
 export function img(id: string, w = 800): string {
-  if (/^\d+$/.test(id)) {
-    return `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
-  }
-  return `https://images.unsplash.com/photo-${id}?w=${w}&q=72&auto=format&fit=crop`;
+  const width = SITE_WIDTHS.find((s) => s >= w) ?? SITE_WIDTHS[SITE_WIDTHS.length - 1];
+  return `images/site/${id}-${width}.webp`;
 }
 
 /** Photo ids by name; who took each one is in photos.ts (and on /credits). */

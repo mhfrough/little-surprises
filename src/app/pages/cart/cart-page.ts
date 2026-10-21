@@ -3,7 +3,9 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { BRAND } from '../../core/catalog';
 import { CatalogService, cityLabel } from '../../core/catalog.service';
+import { CelebrateService } from '../../core/celebrate.service';
 import { SeoService } from '../../core/seo.service';
+import { bold, clean, italic, waLink } from '../../core/whatsapp';
 import { BagStore, CartItem } from '../../core/stores';
 import { BrandMark } from '../../shared/brand-mark';
 import { Breadcrumbs } from '../../shared/breadcrumbs';
@@ -413,6 +415,7 @@ const PAYMENTS: PayMethod[] = [
 export class CartPage {
   protected readonly I = I;
   protected readonly bag = inject(BagStore);
+  private readonly celebrate = inject(CelebrateService);
   protected readonly catalog = inject(CatalogService);
   protected readonly brand = BRAND;
   protected readonly slots = SLOTS;
@@ -540,35 +543,44 @@ export class CartPage {
       payment: f['pay'],
       promo: this.bag.promo()?.ok ? this.bag.promoCode() : undefined,
     });
+    // WhatsApp formatting: *bold* headings, _italic_ details, an emoji per block
     const text = [
-      `New order ${order.id} from ${BRAND.siteUrl}`,
+      `🎁 ${bold(`New order ${order.id} · ${BRAND.name}`)}`,
+      italic(BRAND.siteUrl.replace(/^https?:\/\//, '')),
       '',
-      ...this.bag.items().map((i) => `• ${i.quantity} × ${i.name} — ${fmt(i.unitPrice * i.quantity)}${i.meta ? `\n   ${i.meta}` : ''}`),
+      `🛍️ ${bold('Items')}`,
+      ...this.bag
+        .items()
+        .map((i) => `• ${i.quantity} × ${bold(clean(i.name))} — ${fmt(i.unitPrice * i.quantity)}${i.meta ? `\n   ${italic(clean(i.meta))}` : ''}`),
       '',
+      `💰 ${bold('Bill')}`,
       `Subtotal: ${fmt(this.bag.subtotal())}`,
-      `Delivery: ${this.bag.deliveryFee() ? fmt(this.bag.deliveryFee()) : 'Free'}`,
+      `Delivery: ${this.bag.deliveryFee() ? fmt(this.bag.deliveryFee()) : 'Free 🎉'}`,
       ...(this.bag.discount() ? [`Promo ${this.bag.promoCode()}: −${fmt(this.bag.discount())}`] : []),
-      `Total: ${fmt(this.bag.total())}`,
-      `Payment: ${f['pay']}`,
+      bold(`Total: ${fmt(this.bag.total())}`),
+      `Payment: ${clean(f['pay'])}`,
       '',
-      `From: ${f['name']} (${f['phone']})`,
-      `To: ${f['rname']} (${f['rphone']})`,
-      `Address: ${f['address']}, ${this.city()}`,
-      `When: ${when}, ${f['slot']}`,
-      f['note'] ? `Gift note: ${f['note']}` : '',
-      f['surprise'] ? 'Surprise delivery — keep the sender secret' : '',
-      f['hidePrice'] ? 'No prices in the gift' : '',
+      `👤 ${bold('From:')} ${clean(f['name'])} (${clean(f['phone'])})`,
+      `🎀 ${bold('To:')} ${clean(f['rname'])} (${clean(f['rphone'])})`,
+      `📍 ${bold('Address:')} ${clean(f['address'])}, ${this.city()}`,
+      `🕑 ${bold('When:')} ${clean(when)}, ${clean(f['slot'])}`,
+      ...(f['note']?.trim() ? ['', `💌 ${bold('Gift note')}`, italic(clean(f['note']))] : []),
+      ...(f['surprise'] || f['hidePrice'] ? [''] : []),
+      f['surprise'] ? `🤫 ${italic('Surprise delivery: keep the sender secret')}` : '',
+      f['hidePrice'] ? `🏷️ ${italic('No prices in the gift')}` : '',
     ]
       .filter((l, idx, all) => l !== '' || all[idx - 1] !== '')
-      .join('\n');
+      .join('\n')
+      .trim();
     this.lastOrder = { name: f['name'], phone: f['phone'] };
     if (this.bag.promo()?.ok) this.vouchers.redeem(this.bag.promoCode());
     if (this.remember()) writeStore(() => localStorage, ME_KEY, { name: f['name'].trim(), phone: f['phone'].trim() });
     writeStore(() => sessionStorage, DRAFT_KEY, null);
-    const url = `https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(text)}`;
+    const url = waLink(text);
     this.waUrl.set(url);
     window.open(url, '_blank', 'noopener,noreferrer');
     this.sent.set(true);
+    void this.celebrate.big();
   }
 
   private readonly orders = inject(OrdersService);
@@ -621,6 +633,7 @@ export class CartPage {
       source: f['source'],
     });
     this.surveyDone.set(true);
+    void this.celebrate.small();
   }
 
   startOver(): void {

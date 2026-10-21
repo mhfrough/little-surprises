@@ -111,7 +111,8 @@ import { AdminAuth } from './admin-auth';
     .demo span { color: var(--accent); font-weight: 600; }
     @media (max-width: 900px) {
       .shell { grid-template-columns: minmax(0, 1fr); }
-      .side { position: fixed; inset: 0 auto 0 0; z-index: 30; width: 260px; transform: translateX(-100%); transition: transform var(--dur) var(--ease-out); box-shadow: var(--shadow-float); }
+      /* floats clear of the screen edges, like a card laid over the page */
+      .side { position: fixed; inset: 12px auto 12px 12px; height: auto; z-index: 30; width: 260px; border-radius: var(--radius); overflow-y: auto; transform: translateX(calc(-100% - 12px)); transition: transform var(--dur) var(--ease-out); box-shadow: var(--shadow-float); }
       .nav-open .side { transform: none; }
       .menu { display: inline-grid; }
     }

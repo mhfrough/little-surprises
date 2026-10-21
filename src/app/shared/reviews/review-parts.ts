@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { CelebrateService } from '../../core/celebrate.service';
 import { Product, Review } from '../../core/models';
 import { RatingSummary, ReviewsService } from '../../core/reviews.service';
 import { I } from '../icons';
@@ -218,6 +219,7 @@ export class ReviewForm {
   protected readonly tried = signal(false);
   protected readonly error = signal('');
   protected readonly done = signal(false);
+  private readonly celebrate = inject(CelebrateService);
 
   submit(e: SubmitEvent): void {
     e.preventDefault();
@@ -244,6 +246,7 @@ export class ReviewForm {
     this.error.set('');
     this.len.set(0);
     this.done.set(true);
+    void this.celebrate.small();
     this.posted.emit();
   }
 }

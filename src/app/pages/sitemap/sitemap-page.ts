@@ -19,6 +19,7 @@ const PAGE_LABELS: Record<string, string> = {
   '/': 'Home',
   '/shop': 'All gifts',
   '/build-a-basket': 'Build a basket',
+  '/about': 'About us',
   '/contact': 'Contact us',
   '/reviews': 'Customer reviews',
 };

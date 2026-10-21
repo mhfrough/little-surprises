@@ -32,7 +32,8 @@ import { catalogSrcset } from '../thumb';
       transition: background-color var(--dur-fast) var(--ease-out);
     }
     .row:hover { background: var(--surface-2); }
-    img { width: 76px; height: 76px; object-fit: cover; border-radius: 14px; }
+    img { width: 76px; height: 76px; object-fit: cover; border-radius: 14px; transition: transform var(--dur) var(--ease-spring); }
+    .row:hover img { transform: scale(1.08) rotate(-2deg); }
     .text { display: grid; gap: 2px; min-width: 0; }
     .name { font-weight: 600; letter-spacing: -0.01em; }
     .desc { font-size: var(--text-small); color: var(--ink-2); }

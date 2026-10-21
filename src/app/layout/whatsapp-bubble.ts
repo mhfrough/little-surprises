@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { BRAND } from '../core/catalog';
+import { waLink } from '../core/whatsapp';
 import { I } from '../shared/icons';
 import { WhatsappIcon } from '../shared/whatsapp-icon';
 
@@ -160,8 +161,8 @@ export class WhatsappBubble implements OnInit, OnDestroy {
   protected readonly time = new Date().toLocaleTimeString('en-PK', { hour: 'numeric', minute: '2-digit' });
 
   send(): void {
-    const text = this.message().trim() || 'Hello, I need help choosing a gift';
-    window.open(`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    const text = this.message().trim() || '👋 Hello! I need help choosing a *gift* 🎁';
+    window.open(waLink(text), '_blank', 'noopener,noreferrer');
     this.close();
   }
 

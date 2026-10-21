@@ -5,6 +5,7 @@ import { BRAND, PIC, img } from '../../core/catalog';
 import { InboxService } from '../../core/inbox.service';
 import { PoliciesService } from '../../core/policies.service';
 import { SeoService } from '../../core/seo.service';
+import { waLink } from '../../core/whatsapp';
 import { Breadcrumbs } from '../../shared/breadcrumbs';
 import { I } from '../../shared/icons';
 import { TiktokIcon } from '../../shared/tiktok-icon';
@@ -49,7 +50,7 @@ const TOPICS = [
             {{ isOpen() ? 'Open now · usually replies in under 10 minutes' : 'Closed now · we reply from ' + openLabel + ' tomorrow' }}
           </p>
           <div class="cta">
-            <a class="btn btn-lg wa" [href]="wa('Hi! I need help with a gift.')" target="_blank" rel="noopener">
+            <a class="btn btn-lg wa" [href]="wa('👋 Hi! I need help choosing a *gift* 🎁')" target="_blank" rel="noopener">
               <app-whatsapp-icon [size]="22" /> Chat on WhatsApp
             </a>
             <a class="btn btn-lg btn-on-dark" [href]="'tel:+' + brand.whatsapp">
@@ -65,7 +66,7 @@ const TOPICS = [
           <h2 id="ways-title" class="visually-hidden">Ways to reach us</h2>
           <ul class="ways" role="list">
             <li>
-              <a class="way" [href]="wa('Hi!')" target="_blank" rel="noopener">
+              <a class="way" [href]="wa('👋 Hi!')" target="_blank" rel="noopener">
                 <span class="w-icon wa-ic"><app-whatsapp-icon [size]="24" /></span>
                 <strong>WhatsApp</strong><span>{{ brand.phone }}</span><em>Fastest · replies in minutes</em>
               </a>
@@ -295,7 +296,7 @@ export class ContactPage implements OnDestroy {
   }
 
   wa(text: string): string {
-    return `https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(text)}`;
+    return waLink(text);
   }
 
   pickTopic(id: string): void {

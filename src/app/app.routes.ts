@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'product/:slug', loadComponent: () => import('./pages/product/product-page').then((m) => m.ProductPage) },
   { path: 'build-a-basket', loadComponent: () => import('./pages/builder/builder-page').then((m) => m.BuilderPage) },
   { path: 'cart', loadComponent: () => import('./pages/cart/cart-page').then((m) => m.CartPage) },
+  { path: 'about', loadComponent: () => import('./pages/about/about-page').then((m) => m.AboutPage) },
   { path: 'contact', loadComponent: () => import('./pages/contact/contact-page').then((m) => m.ContactPage) },
   { path: 'policies', pathMatch: 'full', redirectTo: 'policies/delivery' },
   { path: 'policies/:slug', loadComponent: () => import('./pages/policy/policy-page').then((m) => m.PolicyPage) },

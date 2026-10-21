@@ -229,7 +229,7 @@ const products = all.map((p) => {
 
 // Source images are up to ~1.2 MB with no resizing CDN, so each real photo is
 // kept twice as WebP: 640px for pages (`images`) and 1600px for the lightbox
-// (`zoom`). Products with one photo also get a close-up crop of it, so the
+// (`zoom`); build-thumbs.mjs adds a 400px copy of the 640px one for small cards. Products with one photo also get a close-up crop of it, so the
 // gallery has a detail view. `sourceImages` keeps the originals for the backend.
 if (!args.includes('--no-images')) {
   const sharp = (await import('sharp')).default;

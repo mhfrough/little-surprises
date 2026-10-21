@@ -138,19 +138,18 @@ export class SitemapPage {
 
   private readonly entries = computed<Entry[]>(() => {
     const text = this.xml.value();
-    // No DOMParser while prerendering; the list fills in once the page boots.
-    if (!text || typeof DOMParser === 'undefined') return [];
-    const doc = new DOMParser().parseFromString(text, 'application/xml');
-    return [...doc.getElementsByTagName('url')].map((u) => {
-      const loc = u.getElementsByTagName('loc')[0]?.textContent ?? '';
-      const path = safePath(loc);
-      const imageTitle = u.getElementsByTagNameNS('*', 'title')[0]?.textContent ?? undefined;
+    if (!text) return [];
+    // Our own sitemap.xml (scripts/build-sitemap.mjs), read without DOMParser so the
+    // list is in the prerendered page too.
+    return [...text.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, u]) => {
+      const path = safePath(xmlTag(u, 'loc') ?? '');
+      const imageTitle = xmlTag(u, 'image:title');
       const slug = path.split('/').filter(Boolean).pop() ?? '';
       return {
         path,
         label: PAGE_LABELS[path] ?? imageTitle ?? this.nameFor(path, slug),
-        lastmod: u.getElementsByTagName('lastmod')[0]?.textContent ?? '',
-        image: u.getElementsByTagNameNS('*', 'loc')[1]?.textContent ?? undefined,
+        lastmod: xmlTag(u, 'lastmod') ?? '',
+        image: xmlTag(u, 'image:loc'),
       };
     });
   });
@@ -215,4 +214,10 @@ function safePath(loc: string): string {
   } catch {
     return loc;
   }
+}
+
+/** First <name>…</name> in a sitemap entry, unescaped. */
+function xmlTag(xml: string, name: string): string | undefined {
+  const m = xml.match(new RegExp(`<${name}>([^<]*)</${name}>`));
+  return m?.[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
 }

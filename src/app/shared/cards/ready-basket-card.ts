@@ -4,6 +4,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CatalogService } from '../../core/catalog.service';
 import { Product } from '../../core/models';
 import { I } from '../icons';
+import { catalogSrcset } from '../thumb';
 import { MoneyPipe } from '../money.pipe';
 
 /** A ready-made hamper: gift it as is, or open it in the builder. */
@@ -16,7 +17,7 @@ import { MoneyPipe } from '../money.pipe';
     @let b = basket();
     <article class="card">
       <div class="media" data-reveal>
-        <a [routerLink]="['/product', b.slug]" tabindex="-1" aria-hidden="true"><img [src]="b.images[0]" alt="" loading="lazy" width="640" height="640" /></a>
+        <a [routerLink]="['/product', b.slug]" tabindex="-1" aria-hidden="true"><img [src]="b.images[0]" [attr.srcset]="srcset(b.images[0])" sizes="auto, (max-width: 560px) 100vw, 400px" alt="" loading="lazy" width="640" height="640" /></a>
       </div>
       <div class="body" data-reveal>
         <p class="occasion">{{ b.brand ? b.brand + ' · ' : '' }}{{ catalog.categoryName(b.categoryId) }}</p>
@@ -72,6 +73,7 @@ import { MoneyPipe } from '../money.pipe';
 })
 export class ReadyBasketCard {
   protected readonly I = I;
+  protected readonly srcset = catalogSrcset;
   protected readonly catalog = inject(CatalogService);
   readonly basket = input.required<Product>();
   readonly reversed = input(false);

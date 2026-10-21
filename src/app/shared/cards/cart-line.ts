@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import { MoneyPipe } from '../money.pipe';
 import { QtyStepper } from '../qty-stepper';
+import { catalogSrcset } from '../thumb';
 
 /** One row of the bag. `meta` lists what a custom basket is made of. */
 @Component({
@@ -8,7 +9,7 @@ import { QtyStepper } from '../qty-stepper';
   imports: [MoneyPipe, QtyStepper],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <img [src]="image()" alt="" width="88" height="88" loading="lazy" />
+    <img [src]="image()" [attr.srcset]="srcset(image())" sizes="auto, 88px" alt="" width="88" height="88" loading="lazy" />
     <div class="info">
       <h3 class="clamp-2" [title]="name()">{{ name() }}</h3>
       @if (meta()) {
@@ -46,6 +47,7 @@ import { QtyStepper } from '../qty-stepper';
   `,
 })
 export class CartLine {
+  protected readonly srcset = catalogSrcset;
   readonly name = input.required<string>();
   readonly image = input.required<string>();
   readonly meta = input('');

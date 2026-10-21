@@ -11,6 +11,7 @@ import { ReadyBasketCard } from '../shared/cards/ready-basket-card';
 import { ReviewCard } from '../shared/cards/review-card';
 import { I } from '../shared/icons';
 import { RevealDirective } from '../shared/reveal.directive';
+import { catalogSrcset } from '../shared/thumb';
 
 @Component({
   selector: 'app-ready-baskets-section',
@@ -148,7 +149,7 @@ export class ReviewsSection {
       </div>
       <ul class="grid" role="list" data-reveal>
         @for (p of photos(); track p.id) {
-          <li><img [src]="p.images[0]" [alt]="p.name" width="640" height="640" loading="lazy" /></li>
+          <li><img [src]="p.images[0]" [attr.srcset]="srcset(p.images[0])" sizes="auto, (max-width: 560px) 33vw, 240px" [alt]="p.name" width="640" height="640" loading="lazy" /></li>
         }
       </ul>
     </section>
@@ -165,6 +166,7 @@ export class ReviewsSection {
 export class SocialSection {
   protected readonly I = I;
   protected readonly brand = BRAND;
+  protected readonly srcset = catalogSrcset;
   private readonly catalog = inject(CatalogService);
   protected readonly photos = computed(() =>
     ['hampers', 'flowers', 'chocolates', 'cakes', 'mithai', 'perfumes']
@@ -178,7 +180,7 @@ export class SocialSection {
   imports: [RevealDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="container" appReveal aria-labelledby="news-title">
+    <section class="section container" appReveal aria-labelledby="news-title">
       <div class="panel">
         <div>
           <h2 id="news-title" class="t-title" data-reveal>Little notes, now and then</h2>

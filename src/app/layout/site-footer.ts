@@ -53,21 +53,21 @@ import { WhatsappIcon } from '../shared/whatsapp-icon';
 
         <!-- links -->
         <nav class="col" aria-label="Shop by category">
-          <h3>Shop</h3>
+          <h2>Shop</h2>
           <a routerLink="/shop">All gifts <span class="n">{{ catalog.products().length || '' }}</span></a>
           @for (c of catalog.categories(); track c.id) {
             <a [routerLink]="['/category', c.slug]">{{ c.name }} <span class="n">{{ c.count }}</span></a>
           }
         </nav>
         <nav class="col" aria-label="Shop by occasion">
-          <h3>Occasions</h3>
+          <h2>Occasions</h2>
           @for (o of catalog.occasions(); track o.id) {
             <a [routerLink]="['/occasion', o.id]">{{ o.name }}</a>
           }
           <a routerLink="/build-a-basket" class="accent">Build a basket</a>
         </nav>
         <nav class="col" aria-label="Help">
-          <h3>Help</h3>
+          <h2>Help</h2>
           <a routerLink="/contact">Contact us</a>
           <a routerLink="/reviews">Customer reviews</a>
           <a routerLink="/policies/delivery">Delivery</a>
@@ -148,7 +148,7 @@ import { WhatsappIcon } from '../shared/whatsapp-icon';
     .social a:hover { background: rgb(255 255 255 / 0.16); transform: translateY(-2px); }
 
     .col { display: grid; gap: 2px; align-content: start; }
-    h3 { font-size: var(--text-small); font-weight: 650; letter-spacing: 0.02em; color: #fff; margin-bottom: 10px; }
+    h2 { font-size: var(--text-small); font-weight: 650; letter-spacing: 0.02em; color: #fff; margin-bottom: 10px; }
     .col a { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; font-size: 0.9375rem; color: var(--soft); transition: color var(--dur-fast); }
     .col a:hover { color: #fff; }
     .col .n { font-size: 0.75rem; color: rgb(247 232 236 / 0.66); font-variant-numeric: tabular-nums; }

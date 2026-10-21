@@ -304,7 +304,8 @@ const PAGE = 12;
       }
       .mobile-bar > div { display: grid; }
       .mobile-bar strong { font-size: var(--text-headline); }
-      .stepper .lbl { display: none; }
+      /* numbers only on phones; the label stays for screen readers */
+      .stepper .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       .stepper button { justify-content: center; }
     }
     @media (max-width: 560px) {

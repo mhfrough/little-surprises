@@ -114,7 +114,8 @@ const TOPICS = [
 
           <form class="form" (submit)="send($event)" novalidate>
             @if (sent()) {
-              <p class="notice is-positive" role="status"><lucide-icon [img]="I.CircleCheck" [size]="18" [strokeWidth]="2" /> Your message is ready in {{ sent() }}. Send it there and we'll reply soon.</p>
+              <p class="notice is-positive" role="status"><lucide-icon [img]="I.CircleCheck" [size]="18" [strokeWidth]="2" />
+                {{ sent() === 'inbox' ? 'Message sent. We’ll reply on the number or email you gave.' : 'Your message is ready in WhatsApp. Send it there and we’ll reply soon.' }}</p>
             }
             <div class="two">
               <div class="field"><label for="m-name">Your name</label><input id="m-name" name="name" class="input" required autocomplete="name" /></div>
@@ -127,7 +128,7 @@ const TOPICS = [
             </div>
             <div class="row">
               <button class="btn btn-primary btn-lg" value="whatsapp"><app-whatsapp-icon [size]="18" /> Send on WhatsApp</button>
-              <button class="btn btn-secondary btn-lg" value="email"><lucide-icon [img]="I.Mail" [size]="18" [strokeWidth]="2" /> Send by email</button>
+              <button class="btn btn-secondary btn-lg" value="inbox"><lucide-icon [img]="I.Send" [size]="18" [strokeWidth]="2" /> Send</button>
             </div>
           </form>
         </section>
@@ -285,6 +286,7 @@ export class ContactPage implements OnDestroy {
       title: 'Contact',
       description: `WhatsApp, call or email ${BRAND.name}, ${OPEN_HOUR} am – 10 pm every day. Same-day gift delivery across Karachi.`,
       path: '/contact',
+      pageType: 'ContactPage',
     });
   }
 
@@ -311,12 +313,8 @@ export class ContactPage implements OnDestroy {
     const f = Object.fromEntries(new FormData(form)) as Record<string, string>;
     const topic = TOPICS.find((t) => t.id === this.topic())?.label ?? 'Message';
     const body = `${f['message']}\n\n— ${f['name']} (${f['contact']})`;
-    const via = (e.submitter as HTMLButtonElement | null)?.value === 'email' ? 'email' : 'whatsapp';
-    const url =
-      via === 'email'
-        ? `mailto:${BRAND.email}?subject=${encodeURIComponent(topic)}&body=${encodeURIComponent(body)}`
-        : this.wa(`${topic}\n\n${body}`);
-    // the operator sees every message in the portal inbox, whichever app sends it
+    const via = (e.submitter as HTMLButtonElement | null)?.value === 'inbox' ? 'inbox' : 'whatsapp';
+    // every message lands in the portal inbox; "Send" stops there, WhatsApp also opens the chat
     const id = this.topic();
     this.inbox.add({
       type: id === 'complaint' ? 'complaint' : id === 'feedback' ? 'feedback' : 'contact',
@@ -325,7 +323,11 @@ export class ContactPage implements OnDestroy {
       subject: topic,
       body: f['message'],
     });
-    window.open(url, via === 'email' ? '_self' : '_blank', 'noopener,noreferrer');
-    this.sent.set(via === 'email' ? 'your email app' : 'WhatsApp');
+    if (via === 'whatsapp') window.open(this.wa(`${topic}\n\n${body}`), '_blank', 'noopener,noreferrer');
+    else {
+      form.reset();
+      this.draft.set('');
+    }
+    this.sent.set(via);
   }
 }

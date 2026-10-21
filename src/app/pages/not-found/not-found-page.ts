@@ -26,6 +26,6 @@ import { GiftTag } from '../../shared/gift-tag';
 })
 export class NotFoundPage {
   constructor() {
-    inject(SeoService).set({ title: 'Page not found' });
+    inject(SeoService).set({ title: 'Page not found', noindex: true });
   }
 }

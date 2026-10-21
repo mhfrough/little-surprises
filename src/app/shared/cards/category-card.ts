@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { Category } from '../../core/models';
 import { I } from '../icons';
+import { catalogSrcset } from '../thumb';
 
 @Component({
   selector: 'app-category-card',
@@ -10,7 +11,7 @@ import { I } from '../icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="row" [routerLink]="['/category', category().slug]">
-      <img [src]="category().image ?? ''" alt="" loading="lazy" width="400" height="400" />
+      <img [src]="category().image ?? ''" [attr.srcset]="srcset(category().image)" sizes="auto, 200px" alt="" loading="lazy" width="400" height="400" />
       <span class="text">
         <span class="name clamp-1">{{ category().name }}</span>
         <span class="desc clamp-2">{{ category().count }} gifts · {{ category().description }}</span>
@@ -41,5 +42,6 @@ import { I } from '../icons';
 })
 export class CategoryCard {
   protected readonly I = I;
+  protected readonly srcset = catalogSrcset;
   readonly category = input.required<Category>();
 }

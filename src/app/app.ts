@@ -28,6 +28,12 @@ import { WhatsappBubble } from './layout/whatsapp-bubble';
     }
     <app-toast />
   `,
+  // Pages drawn only in the browser (the bag, admin) arrive a beat after the
+  // shell; until the routed page is attached next to the outlet, keep the footer
+  // back so it doesn't appear at the top and then jump down.
+  styles: `
+    router-outlet + app-site-footer { display: none; }
+  `,
 })
 export class App {
   private readonly router = inject(Router);

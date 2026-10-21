@@ -170,8 +170,9 @@ import { I } from '../shared/icons';
     .sheet .btn { margin-top: auto; }
     @keyframes fade { from { opacity: 0; } }
     @keyframes slide { from { transform: translateX(-100%); } }
-    /* the full menu needs ~1280px next to the search field; below that, the menu button */
-    @media (max-width: 1280px) {
+    /* the full menu needs ~1325px next to the search field (more while the fallback
+       font shows); below that, the menu button */
+    @media (max-width: 1360px) {
       .links { display: none; }
       .menu-btn { display: inline-grid; }
       .tools { margin-left: auto; }

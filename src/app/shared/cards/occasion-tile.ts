@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Occasion } from '../../core/models';
+import { catalogSrcset } from '../thumb';
 
 @Component({
   selector: 'app-occasion-tile',
@@ -8,7 +9,7 @@ import { Occasion } from '../../core/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a class="tile" [routerLink]="['/occasion', occasion().id]">
-      <span class="media"><img [src]="occasion().image" alt="" loading="lazy" width="400" height="400" /></span>
+      <span class="media"><img [src]="occasion().image" [attr.srcset]="srcset(occasion().image)" sizes="auto, (max-width: 560px) 50vw, 320px" alt="" loading="lazy" width="400" height="400" /></span>
       <span class="name clamp-1">{{ occasion().name }}</span>
       <span class="count t-num">{{ occasion().count }} gifts</span>
     </a>
@@ -32,5 +33,6 @@ import { Occasion } from '../../core/models';
   `,
 })
 export class OccasionTile {
+  protected readonly srcset = catalogSrcset;
   readonly occasion = input.required<Occasion>();
 }

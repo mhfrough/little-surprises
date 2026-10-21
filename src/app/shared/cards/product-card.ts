@@ -4,6 +4,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CatalogService } from '../../core/catalog.service';
 import { Product } from '../../core/models';
 import { I } from '../icons';
+import { catalogSrcset } from '../thumb';
 import { MoneyPipe } from '../money.pipe';
 import { Rating } from '../rating';
 
@@ -15,7 +16,7 @@ import { Rating } from '../rating';
     @let p = product();
     <article class="card" [class.is-out]="!p.inStock">
       <div class="media">
-        <a [routerLink]="['/product', p.slug]" tabindex="-1" aria-hidden="true" class="img-link"><img [src]="p.images[0]" alt="" loading="lazy" width="640" height="640" /></a>
+        <a [routerLink]="['/product', p.slug]" tabindex="-1" aria-hidden="true" class="img-link"><img [src]="p.images[0]" [attr.srcset]="srcset(p.images[0])" sizes="auto, (max-width: 560px) 50vw, 320px" alt="" loading="lazy" width="640" height="640" /></a>
         @if (!p.inStock) {
           <span class="status is-muted">Sold out</span>
         } @else if (p.compareAtPrice) {
@@ -105,6 +106,7 @@ import { Rating } from '../rating';
 })
 export class ProductCard {
   protected readonly I = I;
+  protected readonly srcset = catalogSrcset;
   private readonly catalog = inject(CatalogService);
   readonly product = input.required<Product>();
   readonly wished = model(false);

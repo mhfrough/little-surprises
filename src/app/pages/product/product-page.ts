@@ -286,7 +286,6 @@ export class ProductPage {
         path: `/product/${p.slug}`,
         image: p.images[0],
         jsonLd: {
-          '@context': 'https://schema.org',
           '@type': 'Product',
           name: p.name,
           image: p.images.map((src) => new URL(src, BRAND.siteUrl + '/').href),

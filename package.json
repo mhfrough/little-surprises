@@ -6,10 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "serve:dist": "node scripts/serve-dist.mjs",
     "test": "ng test",
-    "import:catalog": "node scripts/import-catalog.mjs && node scripts/build-reviews.mjs && node scripts/build-sitemap.mjs",
+    "import:catalog": "node scripts/import-catalog.mjs && node scripts/build-reviews.mjs && node scripts/build-sitemap.mjs && node scripts/build-thumbs.mjs",
     "sitemap": "node scripts/build-sitemap.mjs",
-    "prebuild": "node scripts/build-sitemap.mjs",
+    "prebuild": "node scripts/build-sitemap.mjs && node scripts/build-thumbs.mjs",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report e2e-report",
     "reviews": "node scripts/build-reviews.mjs"

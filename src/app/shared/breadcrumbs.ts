@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { SeoService } from '../core/seo.service';
 import { I } from './icons';
 
 export interface Crumb {
@@ -42,4 +43,10 @@ export interface Crumb {
 export class Breadcrumbs {
   protected readonly I = I;
   readonly items = input<Crumb[]>([]);
+
+  constructor() {
+    const seo = inject(SeoService);
+    effect(() => seo.setBreadcrumbs(this.items()));
+    inject(DestroyRef).onDestroy(() => seo.setBreadcrumbs([]));
+  }
 }

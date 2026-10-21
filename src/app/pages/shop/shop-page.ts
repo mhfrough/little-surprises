@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { BRAND } from '../../core/catalog';
 import { CatalogService, cityLabel } from '../../core/catalog.service';
 import { SearchService } from '../../core/search.service';
 import { SeoService } from '../../core/seo.service';
@@ -92,6 +93,7 @@ const PAGE = 24;
           }
         </div>
       } @else if (results().length) {
+        <h2 class="visually-hidden">Gifts</h2>
         <div class="grid">
           @for (p of shown(); track p.id) {
             <app-product-card [product]="p" (add)="bag.add($event)" />
@@ -231,7 +233,18 @@ export class ShopPage {
     });
     effect(() => {
       const path = this.mode() === 'all' ? '/shop' : `/${this.mode()}/${this.slug()}`;
-      this.seo.set({ title: this.heading(), description: this.intro(), path });
+      this.seo.set({
+        title: this.heading(),
+        description: this.intro(),
+        path,
+        pageType: 'CollectionPage',
+        // the gifts on the first page, as links a crawler can follow
+        jsonLd: {
+          '@type': 'ItemList',
+          numberOfItems: this.results().length,
+          itemListElement: this.shown().map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${BRAND.siteUrl}/product/${p.slug}`, name: p.name })),
+        },
+      });
     });
   }
 

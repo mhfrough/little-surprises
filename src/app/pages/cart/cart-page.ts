@@ -373,7 +373,7 @@ export class CartPage {
   protected readonly day = signal<string>('');
 
   constructor() {
-    inject(SeoService).set({ title: 'Checkout', path: '/cart' });
+    inject(SeoService).set({ title: 'Checkout', path: '/cart', noindex: true });
     const first = this.days().find((d) => !d.disabled);
     this.day.set(first?.id ?? 'later');
   }

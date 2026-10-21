@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { PlatformLocation } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -35,7 +36,7 @@ export class App {
       filter((e) => e instanceof NavigationEnd),
       map(() => this.router.url.startsWith('/admin')),
     ),
-    { initialValue: location.pathname.startsWith('/admin') },
+    { initialValue: inject(PlatformLocation).pathname.startsWith('/admin') },
   );
 
   constructor() {

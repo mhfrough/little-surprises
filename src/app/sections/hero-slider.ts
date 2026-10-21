@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, input, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, PLATFORM_ID, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { PIC, img } from '../core/catalog';
@@ -204,16 +205,18 @@ export class HeroSlider implements OnInit, OnDestroy {
   protected readonly slides = SLIDES;
   protected readonly interval = INTERVAL;
   protected readonly index = signal(0);
-  protected readonly paused = signal(matchMedia('(prefers-reduced-motion: reduce)').matches);
+  protected readonly paused = signal(typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches);
   protected readonly hover = signal(false);
   protected readonly focus = signal(false);
   protected readonly playing = computed(() => !this.paused() && !this.hover() && !this.focus());
 
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private timer?: ReturnType<typeof setInterval>;
   private startX = 0;
   private lastTick = Date.now();
 
   ngOnInit(): void {
+    if (!this.browser) return; // prerendered HTML shows the first slide
     // One ticker; it only advances while playing, so pausing never loses the place.
     this.timer = setInterval(() => {
       if (!this.playing() || document.hidden) {

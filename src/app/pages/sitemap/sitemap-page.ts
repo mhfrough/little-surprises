@@ -138,7 +138,8 @@ export class SitemapPage {
 
   private readonly entries = computed<Entry[]>(() => {
     const text = this.xml.value();
-    if (!text) return [];
+    // No DOMParser while prerendering; the list fills in once the page boots.
+    if (!text || typeof DOMParser === 'undefined') return [];
     const doc = new DOMParser().parseFromString(text, 'application/xml');
     return [...doc.getElementsByTagName('url')].map((u) => {
       const loc = u.getElementsByTagName('loc')[0]?.textContent ?? '';

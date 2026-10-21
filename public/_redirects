@@ -1,1 +1,3 @@
-/*    /index.html   200
+# Prerendered pages are real files and win; anything else (cart, admin, unknown
+# links) boots the client-only shell.
+/*    /index.csr.html   200
